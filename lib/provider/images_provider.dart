@@ -8,56 +8,41 @@ class ImagesProvider with ChangeNotifier {
   List<ImagesModel> _images = [];
 
   late ImagesDB _imagesDB;
-  final Map<String, File?> _selectedImageFiles = {};
-
+  Map<String, File?> _selectedImageFiles = {};
 
   List<ImagesModel> get images => _images;
   Map<String, File?> get selectedImageFiles => _selectedImageFiles;
 
+  ImagesProvider() {
+    _imagesDB = ImagesDB();
+  }
 
-ImagesProvider(){
+  Future<void> addNewImages(ImagesModel images) async {
+    await ImagesDB().insertImage(images);
+    await fetchImages();
+    notifyListeners();
+  }
 
-  _imagesDB = ImagesDB();
-}
+  Future<void> fetchImages() async {
+    _images = await ImagesDB().getImageDB();
+    notifyListeners();
+  }
 
-Future<void> addNewImages(ImagesModel images) async{
+  void setSelectedImageFile(String field, File? file) async {
+    _selectedImageFiles[field] = file;
+    notifyListeners();
+  }
 
-  await ImagesDB().insertImage(images);
-  await fetchImages();
-  notifyListeners();
-   
-}
-
-Future<void> fetchImages() async {
-
-_images = await ImagesDB().getImageDB();
-notifyListeners();
-  
-}
-
-void setSelectedImageFile(String field,File? file) async {
-  _selectedImageFiles[field] = file;
-  notifyListeners();
-}
-
-Future<void> deleteFromDatabase(String field) async{
+  Future<void> deleteFromDatabase(String field) async {
     final imageFile = _selectedImageFiles[field];
-     if (imageFile != null) {
-      // Delete the file from the file system
+    if (imageFile != null) {
       await imageFile.delete();
 
-      // Delete the record from the database
       final filePath = imageFile.path;
       await ImagesDB().deleteImage(field, filePath);
 
-      // Remove the file from the provider
       _selectedImageFiles[field] = null;
       notifyListeners();
-    }//delete this if not working
-}
-
-
-
-
-
+    }
+  }
 }

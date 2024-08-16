@@ -76,9 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Tab(
                   child: Container(
                 
-                    // decoration: BoxDecoration(
-                    //     borderRadius: BorderRadius.circular(60),
-                    //     border: Border.all(color: Colors.black12, width: 1)),
+                    
                     child: const Align(
                       alignment: Alignment.center,
                       child: Text("รูปภาพ"),
@@ -88,9 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Tab(
                   child: Container(
                  
-                    // decoration: BoxDecoration(
-                    //     borderRadius: BorderRadius.circular(60),
-                    //     border: Border.all(color: Colors.black12, width: 1)),
+                  
                     child: const Align(
                       alignment: Alignment.center,
                       child: Text("ถัดไป"),

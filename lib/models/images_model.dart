@@ -1,22 +1,22 @@
 class ImagesModel {
   int? id;
-  late String fieldcardImage;
-  late String frontImage;
-  late String backImage;
-  late String leftSide;
-  late String rightSide;
-  late String carRegistrationPlate;
-  late String chassis;
+  String? fieldcardImage;
+  String? frontImage;
+  String? backImage;
+  String? leftSide;
+  String? rightSide;
+  String? carRegistrationPlate;
+  String? chassis;
 
   ImagesModel(
       {this.id,
-      required this.fieldcardImage,
-      required this.frontImage,
-      required this.backImage,
-      required this.leftSide,
-      required this.rightSide,
-      required this.carRegistrationPlate,
-      required this.chassis});
+      this.fieldcardImage,
+      this.frontImage,
+      this.backImage,
+      this.leftSide,
+      this.rightSide,
+      this.carRegistrationPlate,
+      this.chassis});
 
   Map<String, dynamic> toMap() {
     return {

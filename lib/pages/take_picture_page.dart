@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kunchang_photo/models/images_model.dart';
 import 'package:kunchang_photo/pages/blank_page.dart';
+import 'package:kunchang_photo/pages/display_image.dart';
 import 'package:kunchang_photo/provider/images_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:kunchang_photo/pages/custom_ImageField/custom_ImageField.dart';
 
 class TakePicturePage extends StatefulWidget {
   const TakePicturePage({super.key});
@@ -17,60 +19,94 @@ class TakePicturePage extends StatefulWidget {
 class _TakePicturePageState extends State<TakePicturePage> {
   final _formKey = GlobalKey<FormState>();
 
-  // void getImage(BuildContext context, String field) async {
-  //   final ImagePicker _picker = ImagePicker();
-    
-  //   final selectedFile = await _picker.pickImage(source: ImageSource.camera);
+  String? _selectedField = 'fieldCardImage';
 
-  //   if (selectedFile == null) return;
-
-  //   final imageFile = File(selectedFile.path);
-  //   Provider.of<ImagesProvider>(context, listen: false)
-  //       .setSelectedImageFile(field, imageFile);
-  // }
+  final Map<String, String> _fieldLabels = {
+    'fieldCardImage': 'ใบฟิว',
+    'frontImage': 'ข้างหน้ารถ',
+    'backImage': 'ข้างหลลังรถ',
+    'leftSideImage': 'ข้างซ้ายรถ',
+    'rightSideImage': 'ข้างขวารถ',
+    'carRegistrationPlateImage': 'ทะเบียนรถ',
+    'chassisImage': 'ตัวถังรถ',
+  };
 
   void getImage(BuildContext context, String field) async {
-  final ImagePicker _picker = ImagePicker();
+    final ImagePicker _picker = ImagePicker();
 
-  final selectedOption = await showDialog<ImageSource>(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        
-       
-        title: const Text('เลือกแหล่งที่มาของภาพ'),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => Navigator.pop(context, ImageSource.camera),
-            child: const Text('ถ่ายรูป'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, ImageSource.gallery),
-            child: const Text('คลังรูปภาพ'),
-          ),
-        ],
+    final selectedOption = await showDialog<ImageSource>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('เลือกแหล่งที่มาของภาพ'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context, ImageSource.camera),
+              child: const Text('ถ่ายรูป'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, ImageSource.gallery),
+              child: const Text('คลังรูปภาพ'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (selectedOption != null) {
+      final selectedFile = await _picker.pickImage(source: selectedOption);
+
+      if (selectedFile == null) return;
+
+      final imageFile = File(selectedFile.path);
+      Provider.of<ImagesProvider>(context, listen: false)
+          .setSelectedImageFile(field, imageFile);
+    }
+  } // this is for getting the images
+
+  void deleteImage(BuildContext context, String field) async {
+    final imageProvider = Provider.of<ImagesProvider>(context, listen: false);
+
+    if (imageProvider.selectedImageFiles[field] != null ) {
+      final result = await showDialog<bool>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('ลบรูปภาพ'),
+            content: const Text('คุณแน่ใจไหมว่าต้องการลบภาพนี้?'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('ยกเลิก'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('ตกลง'),
+              ),
+            ],
+          );
+        },
       );
-    },
-  );
 
-  if (selectedOption != null) {
-    final selectedFile = await _picker.pickImage(source: selectedOption);
+      if (result == true) {
+        await imageProvider.deleteFromDatabase(field);
 
-    if (selectedFile == null) return;
-
-    final imageFile = File(selectedFile.path);
-    Provider.of<ImagesProvider>(context, listen: false)
-        .setSelectedImageFile(field, imageFile);
-  }
-}
-
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Image deleted'),
+          ),
+        );
+      }
+    }
+  } // This is for deleting the images
 
   @override
   Widget build(BuildContext context) {
-    final imageProvider = Provider.of<ImagesProvider>(context);
-  
+    // final imageProvider = Provider.of<ImagesProvider>(context);
+
     return Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           backgroundColor: HexColor("#2e3150"),
           title: Row(
             children: [
@@ -79,7 +115,8 @@ class _TakePicturePageState extends State<TakePicturePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => BlankPage(),
+                      builder: (context) =>
+                           const BlankPage(), // put the page you want it to redirect you to
                     ),
                   );
                 },
@@ -107,220 +144,49 @@ class _TakePicturePageState extends State<TakePicturePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('ใบฟิว',
-                      style: TextStyle(
-                        fontSize: 18,
-                      )),
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    child: Ink(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[400],
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: InkWell(
-                        onTap: () {
-                          getImage(context, 'fieldCardImage');
-                        },
-                        child: imageProvider
-                                    .selectedImageFiles['fieldCardImage'] !=
-                                null
-                            ? Image.file(imageProvider
-                                .selectedImageFiles['fieldCardImage']!)
-                            : const SizedBox(
-                                height: 100,
-                                child: Center(
-                                  child: Icon(Icons.camera_alt),
-                                ),
-                              ),
-                      ),
-                    ),
+                  DropdownButton<String>(
+                    value: _selectedField,
+                    hint: const Text('Select Image Field'),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedField = newValue;
+                      });
+                    },
+                    items: _fieldLabels.entries.map((entry) {
+                      return DropdownMenuItem<String>(
+                        value: entry.key,
+                        child: Text(entry.value),
+                      );
+                    }).toList(),
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  const SizedBox(height: 20),
 
-                  const Text(
-                    'ข้างหน้ารถ',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    child: Ink(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[400],
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: InkWell(
-                        onTap: () {
-                          getImage(context, 'frontImage');
-                        },
-                        child: imageProvider.selectedImageFiles['frontImage'] !=
-                                null
-                            ? Image.file(
-                                imageProvider.selectedImageFiles['frontImage']!)
-                            : const SizedBox(
-                                height: 100,
-                                child: Center(
-                                  child: Icon(Icons.camera_alt),
-                                ),
-                              ),
-                      ),
+                   CustomImageField(
+                      field: _selectedField!,
+                      labelText: _fieldLabels[_selectedField!]!,
+                      getImage: getImage,
+                      deleteImage: deleteImage,
                     ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
 
-                  const Text(
-                    'ข้างหลลังรถ',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    child: Ink(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[400],
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: InkWell(
-                        onTap: () {
-                          getImage(context, 'backImage');
-                        },
-                        child: imageProvider.selectedImageFiles['backImage'] !=
-                                null
-                            ? Image.file(
-                                imageProvider.selectedImageFiles['backImage']!)
-                            : const SizedBox(
-                                height: 100,
-                                child: Center(
-                                  child: Icon(Icons.camera_alt),
-                                ),
-                              ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  const Text(
-                    'ข้างซ้ายรถ',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    child: Ink(
-                        decoration: BoxDecoration(
-                          color: Colors.grey[400],
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: InkWell(
-                          onTap: () {
-                            getImage(context, 'leftSideImage');
-                          },
-                          child: imageProvider
-                                      .selectedImageFiles['leftSideImage'] !=
-                                  null
-                              ? Image.file(imageProvider
-                                  .selectedImageFiles['leftSideImage']!)
-                              : const SizedBox(
-                                  height: 100,
-                                  child: Center(
-                                    child: Icon(Icons.camera_alt),
-                                  ),
-                                ),
-                        )),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  const Text(
-                    'ข้างขวารถ',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    child: Ink(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[400],
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: InkWell(
-                          onTap: () {
-                            getImage(context, 'rightSideImage');
-                          },
-                          child: imageProvider
-                                      .selectedImageFiles['rightSideImage'] !=
-                                  null
-                              ? Image.file(imageProvider
-                                  .selectedImageFiles['rightSideImage']!)
-                              : const SizedBox(
-                                  height: 100,
-                                  child: Center(
-                                    child: Icon(Icons.camera_alt),
-                                  ),
-                                )),
-                    ),
-                  ),  
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  const Text(
-                    'ทะเบียนรถ',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    child: Ink(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[400],
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: InkWell(
-                          onTap: () {
-                            getImage(context, 'carRegistrationPlateImage');
-                          },
-                          child: imageProvider.selectedImageFiles[
-                                      'carRegistrationPlateImage'] !=
-                                  null
-                              ? Image.file(imageProvider.selectedImageFiles[
-                                  'carRegistrationPlateImage']!)
-                              : const SizedBox(
-                                  height: 100,
-                                  child: Center(
-                                    child: Icon(Icons.camera_alt),
-                                  ),
-                                )),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  const Text('คัซซี', style: TextStyle(fontSize: 18)),
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    child: Ink(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[400],
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: InkWell(
-                        onTap: () {
-                          getImage(context, 'chassis');
-                        },
-                        child: imageProvider.selectedImageFiles['chassis'] !=
-                                null
-                            ? Image.file(
-                                imageProvider.selectedImageFiles['chassis']!)
-                            : const SizedBox(
-                                height: 100,
-                                child: Center(
-                                  child: Icon(Icons.camera_alt),
-                                ),
-                              ),
-                      ),
-                    ),
-                  ),
+                  // const SizedBox(height: 20),
+
+                  //CustomImageField(field: 'fieldCardImage', labelText: 'ใบฟิว', getImage: getImage, deleteImage: deleteImage), // this one use the custom__image to create a image field // external file
+
+                  // _buildImageField(
+                  //     context, imageProvider, 'fieldCardImage', 'ใบฟิว'),
+                  // _buildImageField(
+                  //     context, imageProvider, 'frontImage', 'ข้างหน้ารถ'),
+                  // _buildImageField(
+                  //     context, imageProvider, 'backImage', 'ข้างหลลังรถ'),
+                  // _buildImageField(
+                  //     context, imageProvider, 'leftSideImage', 'ข้างซ้ายรถ'),
+                  // _buildImageField(
+                  //     context, imageProvider, 'rightSideImage', 'ข้างขวารถ'),
+                  // _buildImageField(context, imageProvider,
+                  //     'carRegistrationPlateImage', 'ทะเบียนรถ'),
+                  // _buildImageField(
+                  //     context, imageProvider, 'chassisImage', 'ตัวถังรถ'), // this one is use Widget _buildImageField to create a image field // in this file
+
                   const SizedBox(
                     height: 10,
                   ),
@@ -329,59 +195,52 @@ class _TakePicturePageState extends State<TakePicturePage> {
                     child: ElevatedButton(
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          _formKey.currentState!.save();
+                         // _formKey.currentState!.save();
+                          final imageProvider = Provider.of<ImagesProvider>(
+                              context,
+                              listen: false);
 
-                          final fieldCardImage = imageProvider
-                              .selectedImageFiles['fieldCardImage'];
-                          final frontImage =
-                              imageProvider.selectedImageFiles['frontImage'];
-                          final backImage =
-                              imageProvider.selectedImageFiles['backImage'];
-                          final leftSideImage =
-                              imageProvider.selectedImageFiles['leftSideImage'];
-                          final rightSideImage = imageProvider
-                              .selectedImageFiles['rightSideImage'];
-                          final carRegistrationPlateImage = imageProvider
-                              .selectedImageFiles['carRegistrationPlateImage'];
-                          final chassis =
-                              imageProvider.selectedImageFiles['chassis'];
+                          final images = ImagesModel(
+                          fieldcardImage: imageProvider.selectedImageFiles['fieldCardImage']?.path,
+                          frontImage: imageProvider.selectedImageFiles['frontImage']?.path,
+                          backImage: imageProvider.selectedImageFiles['backImage']?.path,
+                          leftSide: imageProvider.selectedImageFiles['leftSideImage']?.path,
+                          rightSide: imageProvider.selectedImageFiles['rightSideImage']?.path,
+                          carRegistrationPlate: imageProvider.selectedImageFiles['carRegistrationPlateImage']?.path,
+                          chassis: imageProvider.selectedImageFiles['chassisImage']?.path,
+                          );
 
-                          if (fieldCardImage != null &&
-                              frontImage != null &&
-                              backImage != null &&
-                              leftSideImage != null &&
-                              rightSideImage != null &&
-                              carRegistrationPlateImage != null &&
-                              chassis != null) {
-                            final images = ImagesModel(
-                              fieldcardImage: fieldCardImage.path,
-                              frontImage: frontImage.path,
-                              backImage: backImage.path,
-                              leftSide: leftSideImage.path,
-                              rightSide: rightSideImage.path,
-                              carRegistrationPlate:
-                                  carRegistrationPlateImage.path,
-                              chassis: chassis.path,
-                            );
+                          
 
-                            await Provider.of<ImagesProvider>(context,
-                                    listen: false)
-                                .addNewImages(images);
-
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('บันทึกสำเร็จ'),
-                              ),
-                            );
-                          }
+                          await Provider.of<ImagesProvider>(context,
+                                  listen: false)
+                              .addNewImages(images);
+                          
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('บันทึกสำเร็จ'),
+                            ),
+                          );
+                          Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DisplayImagePage(imagesModel: images),
+                          ),
+                        );
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(
-                            100, 50), 
+                        minimumSize: const Size(100, 50),
                         padding: const EdgeInsets.all(10),
                       ),
-                      child: const Text('บันทึก'),
+                      child: const Text(
+                        'บันทึก',
+                        style: TextStyle(
+                          fontSize:
+                              20.0, // Adjust this value to increase or decrease the text size
+                        ),
+                      ),
+                      
                     ),
                   )
                 ],
@@ -390,4 +249,55 @@ class _TakePicturePageState extends State<TakePicturePage> {
           ),
         ));
   }
+
+  // Widget _buildImageField(BuildContext context, ImagesProvider imageProvider,
+  //     String field, String labelText) {
+  //   final file = imageProvider.selectedImageFiles[field];
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       Text(
+  //         labelText,
+  //         style: const TextStyle(
+  //           fontSize: 20,
+  //         ),
+  //       ),
+  //       const SizedBox(height: 10),
+  //       Row(
+  //         children: [
+  //           Expanded(
+  //             child: Container(
+  //               height: 200,
+  //               decoration: BoxDecoration(
+  //                 borderRadius: BorderRadius.circular(20),
+  //                 border: Border.all(
+  //                   color: Colors.grey,
+  //                 ),
+  //               ),
+  //               child: file == null
+  //                   ? const Center(
+  //                       child: Text(
+  //                         'ยังไม่มีรูปภาพ',
+  //                         style: TextStyle(
+  //                           fontSize: 15,
+  //                         ),
+  //                       ),
+  //                     )
+  //                   : Image.file(file),
+  //             ),
+  //           ),
+  //           IconButton(
+  //             onPressed: () => getImage(context, field),
+  //             icon: const Icon(Icons.camera_alt),
+  //           ),
+  //           IconButton(
+  //             onPressed: () => deleteImage(context, field),
+  //             icon: const Icon(Icons.close_rounded),
+  //           ),
+  //           const SizedBox(height: 20),
+  //         ],
+  //       ),
+  //     ],
+  //   );
+  // } //this one use to create a image field
 }

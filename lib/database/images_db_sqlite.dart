@@ -39,7 +39,7 @@ class ImagesDB {
   }
 
   void _createDb(Database db, int version) async {
-  await db.execute('''
+    await db.execute('''
     CREATE TABLE $imagesTable(
       $colId INTEGER PRIMARY KEY AUTOINCREMENT,
       $colFieldCardImage TEXT,
@@ -51,30 +51,29 @@ class ImagesDB {
       $colChassis TEXT
     )
   ''');
-}
-
-
-    Future<int> insertImage(ImagesModel images) async {
-    Database db = await database;
-    return await db.insert( imagesTable, images.toMap());
   }
 
+  Future<int> insertImage(ImagesModel images) async {
+    Database db = await database;
+    print('Inserting image: ${images.toMap()}'); // if not working delete this
+    return await db.insert(imagesTable, images.toMap());
+  }
 
   Future<List<ImagesModel>> getImageDB() async {
+    
     Database db = await database;
 
     final List<Map<String, dynamic>> imagesMapList =
         await db.query(imagesTable);
+
     return List.generate(imagesMapList.length, (index) {
       return ImagesModel.fromMap(imagesMapList[index]);
     });
   }
 
-
-    Future<int> deleteImage(String field, String filePath) async {
+  Future<int> deleteImage(String field, String filePath) async {
     Database db = await database;
 
-    // Build the query to delete the record where the specified field matches the filePath.
     int result = await db.delete(
       imagesTable,
       where: '$field = ?',
@@ -82,5 +81,5 @@ class ImagesDB {
     );
 
     return result;
-  }// if things not working out just delete this part
+  }
 }
