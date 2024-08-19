@@ -21,41 +21,49 @@ class DisplayImagePage extends StatelessWidget {
         child: ListView(
           children: [
             if (imagesModel.fieldcardImage != null)
-              ImageDisplayField(
-                labelText: 'ใบฟิว',
-                imagePath: imagesModel.fieldcardImage!,
-              ),
+              ...imagesModel.fieldcardImage!.map((imagePath) =>
+                  ImageDisplayField(
+                    labelText: 'ใบฟิว',
+                    imagePath: imagePath,
+                  )). toList(),
             if (imagesModel.frontImage != null)
-              ImageDisplayField(
-                labelText: 'ข้างหน้ารถ',
-                imagePath: imagesModel.frontImage!,
-              ),
+              ...imagesModel.frontImage!.map((imagePath) =>
+                  ImageDisplayField(
+                    labelText: 'ข้างหน้ารถ',
+                    imagePath: imagePath,
+                  )).toList(),
             if (imagesModel.backImage != null)
-              ImageDisplayField(
-                labelText: 'ข้างหลลังรถ',
-                imagePath: imagesModel.backImage!,
-              ),
+              ...imagesModel.backImage!.map((imagePath) =>
+                  ImageDisplayField(
+                    labelText: 'ข้างหลลังรถ',
+                    imagePath: imagePath,
+                  )).toList(),
             if (imagesModel.leftSide != null)
-              ImageDisplayField(
-                labelText: 'ข้างซ้ายรถ',
-                imagePath: imagesModel.leftSide!,
-              ),
+              ...imagesModel.leftSide!.map((imagePath) =>
+                  ImageDisplayField(
+                    labelText: 'ข้างซ้ายรถ',
+                    imagePath: imagePath,
+                  )).toList(),
             if (imagesModel.rightSide != null)
-              ImageDisplayField(
-                labelText: 'ข้างขวารถ',
-                imagePath: imagesModel.rightSide!,
-              ),
+              ...imagesModel.rightSide!.map((imagePath) =>
+                  ImageDisplayField(
+                    labelText: 'ข้างขวารถ',
+                    imagePath: imagePath,
+                  )).toList(),
             if (imagesModel.carRegistrationPlate != null)
-              ImageDisplayField(
-                labelText: 'ทะเบียนรถ',
-                imagePath: imagesModel.carRegistrationPlate!,
-              ),
+              ...imagesModel.carRegistrationPlate!.map((imagePath) =>
+                  ImageDisplayField(
+                    labelText: 'ทะเบียนรถ',
+                    imagePath: imagePath,
+                  )).toList(),
             if (imagesModel.chassis != null)
-              ImageDisplayField(
-                labelText: 'ตัวถังรถ',
-                imagePath: imagesModel.chassis!,
+              ...imagesModel.chassis!.map((imagePath) =>
+                  ImageDisplayField(
+                    labelText: 'ตัวถังรถ',
+                    imagePath: imagePath,
+              
               ),
-          ],
+        ).toList()],
         ),
       ),
     );
@@ -82,7 +90,7 @@ class ImageDisplayField extends StatelessWidget {
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
-        Image.file(File(imagePath as String)),
+        Image.file(File(imagePath)),
         const SizedBox(height: 20),
       ],
     );

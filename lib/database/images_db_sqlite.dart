@@ -55,7 +55,7 @@ class ImagesDB {
 
   Future<int> insertImage(ImagesModel images) async {
     Database db = await database;
-    print('Inserting image: ${images.toMap()}'); // if not working delete this
+    // print('Inserting image: ${images.toMap()}'); // if not working delete this
     return await db.insert(imagesTable, images.toMap());
   }
 

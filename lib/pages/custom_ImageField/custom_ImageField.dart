@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:kunchang_photo/provider/images_provider.dart';
@@ -21,7 +20,7 @@ class CustomImageField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final imageProvider = Provider.of<ImagesProvider>(context);
-    final file = imageProvider.selectedImageFiles[field];
+    final files = imageProvider.selectedImageFiles[field] ?? [];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,38 +32,42 @@ class CustomImageField extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 10),
-        
-        
-
-       
-            Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    height: 250,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.grey),
-                    ),
-                    child: file == null
-                        ? const Center(child: Text('ยังไม่มีรูปภาพ'))
-                        : Image.file(file),
-                  ),
+        files.isEmpty
+            ? const Center(child: Text('ยังไม่มีรูปภาพ'))
+            : SizedBox(
+                height: 250,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: files.length,
+                  itemBuilder: (context, index) {
+                    final file = files[index];
+                    return Stack(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 5),
+                          width: 250,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: Colors.grey),
+                          ),
+                          child: Image.file(file, fit: BoxFit.cover),
+                        ),
+                        Positioned(
+                          right: 0,
+                          child: IconButton(
+                            onPressed: () => deleteImage(context, field, index),
+                            icon: const Icon(Icons.close_rounded, color: Colors.red),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
-                IconButton(
-                  onPressed: () => getImage(context, field),
-                  icon: const Icon(Icons.camera_alt),
-                ),
-                IconButton(
-                  onPressed: () => deleteImage(context, field),
-                  icon: const Icon(Icons.close_rounded, color: Colors.red),
-                ),
-              ],
-            ),
-             
-            const SizedBox(height: 20),
-          
-      
+              ),
+        IconButton(
+          onPressed: () => getImage(context, field),
+          icon: const Icon(Icons.camera_alt),
+        ),
       ],
     );
   }

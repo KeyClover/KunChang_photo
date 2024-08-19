@@ -19,12 +19,12 @@ class TakePicturePage extends StatefulWidget {
 class _TakePicturePageState extends State<TakePicturePage> {
   final _formKey = GlobalKey<FormState>();
 
-  String? _selectedField = 'fieldCardImage';
+  String? _selectedField = 'fieldcardImage';
 
   final Map<String, String> _fieldLabels = {
-    'fieldCardImage': 'ใบฟิว',
+    'fieldcardImage': 'ใบฟิว',
     'frontImage': 'ข้างหน้ารถ',
-    'backImage': 'ข้างหลลังรถ',
+    'backImage': 'ข้างหลังรถ',
     'leftSideImage': 'ข้างซ้ายรถ',
     'rightSideImage': 'ข้างขวารถ',
     'carRegistrationPlateImage': 'ทะเบียนรถ',
@@ -60,14 +60,14 @@ class _TakePicturePageState extends State<TakePicturePage> {
 
       final imageFile = File(selectedFile.path);
       Provider.of<ImagesProvider>(context, listen: false)
-          .setSelectedImageFile(field, imageFile);
+          .addSelectedImageFile(field, imageFile);
     }
   } // this is for getting the images
 
-  void deleteImage(BuildContext context, String field) async {
+  void deleteImage(BuildContext context, String field, int index) async {
     final imageProvider = Provider.of<ImagesProvider>(context, listen: false);
 
-    if (imageProvider.selectedImageFiles[field] != null ) {
+    if (imageProvider.selectedImageFiles[field] != null) {
       final result = await showDialog<bool>(
         context: context,
         builder: (BuildContext context) {
@@ -89,7 +89,7 @@ class _TakePicturePageState extends State<TakePicturePage> {
       );
 
       if (result == true) {
-        await imageProvider.deleteFromDatabase(field);
+        await imageProvider.deleteFromDatabase(field, index);
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -116,7 +116,7 @@ class _TakePicturePageState extends State<TakePicturePage> {
                     context,
                     MaterialPageRoute(
                       builder: (context) =>
-                           const BlankPage(), // put the page you want it to redirect you to
+                          const BlankPage(), // put the page you want it to redirect you to
                     ),
                   );
                 },
@@ -160,33 +160,12 @@ class _TakePicturePageState extends State<TakePicturePage> {
                     }).toList(),
                   ),
                   const SizedBox(height: 20),
-
-                   CustomImageField(
-                      field: _selectedField!,
-                      labelText: _fieldLabels[_selectedField!]!,
-                      getImage: getImage,
-                      deleteImage: deleteImage,
-                    ),
-
-                  // const SizedBox(height: 20),
-
-                  //CustomImageField(field: 'fieldCardImage', labelText: 'ใบฟิว', getImage: getImage, deleteImage: deleteImage), // this one use the custom__image to create a image field // external file
-
-                  // _buildImageField(
-                  //     context, imageProvider, 'fieldCardImage', 'ใบฟิว'),
-                  // _buildImageField(
-                  //     context, imageProvider, 'frontImage', 'ข้างหน้ารถ'),
-                  // _buildImageField(
-                  //     context, imageProvider, 'backImage', 'ข้างหลลังรถ'),
-                  // _buildImageField(
-                  //     context, imageProvider, 'leftSideImage', 'ข้างซ้ายรถ'),
-                  // _buildImageField(
-                  //     context, imageProvider, 'rightSideImage', 'ข้างขวารถ'),
-                  // _buildImageField(context, imageProvider,
-                  //     'carRegistrationPlateImage', 'ทะเบียนรถ'),
-                  // _buildImageField(
-                  //     context, imageProvider, 'chassisImage', 'ตัวถังรถ'), // this one is use Widget _buildImageField to create a image field // in this file
-
+                  CustomImageField(
+                    field: _selectedField!,
+                    labelText: _fieldLabels[_selectedField!]!,
+                    getImage: getImage,
+                    deleteImage: deleteImage,
+                  ),
                   const SizedBox(
                     height: 10,
                   ),
@@ -201,32 +180,51 @@ class _TakePicturePageState extends State<TakePicturePage> {
                               listen: false);
 
                           final images = ImagesModel(
-                          fieldcardImage: imageProvider.selectedImageFiles['fieldCardImage']?.path,
-                          frontImage: imageProvider.selectedImageFiles['frontImage']?.path,
-                          backImage: imageProvider.selectedImageFiles['backImage']?.path,
-                          leftSide: imageProvider.selectedImageFiles['leftSideImage']?.path,
-                          rightSide: imageProvider.selectedImageFiles['rightSideImage']?.path,
-                          carRegistrationPlate: imageProvider.selectedImageFiles['carRegistrationPlateImage']?.path,
-                          chassis: imageProvider.selectedImageFiles['chassisImage']?.path,
+                            fieldcardImage: imageProvider
+                                .selectedImageFiles['fieldcardImage']
+                                ?.map((file) => file.path)
+                                .toList(),
+                            frontImage: imageProvider
+                                .selectedImageFiles['frontImage']
+                                ?.map((file) => file.path)
+                                .toList(),
+                            backImage: imageProvider
+                                .selectedImageFiles['backImage']
+                                ?.map((file) => file.path)
+                                .toList(),
+                            leftSide: imageProvider
+                                .selectedImageFiles['leftSide']
+                                ?.map((file) => file.path)
+                                .toList(),
+                            rightSide: imageProvider
+                                .selectedImageFiles['rightSide']
+                                ?.map((file) => file.path)
+                                .toList(),
+                            carRegistrationPlate: imageProvider
+                                .selectedImageFiles['carRegistrationPlate']
+                                ?.map((file) => file.path)
+                                .toList(),
+                            chassis: imageProvider.selectedImageFiles['chassis']
+                                ?.map((file) => file.path)
+                                .toList(),
                           );
-
-                          
 
                           await Provider.of<ImagesProvider>(context,
                                   listen: false)
                               .addNewImages(images);
-                          
+
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text('บันทึกสำเร็จ'),
                             ),
                           );
                           Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => DisplayImagePage(imagesModel: images),
-                          ),
-                        );
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  DisplayImagePage(imagesModel: images),
+                            ),
+                          );
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -240,7 +238,6 @@ class _TakePicturePageState extends State<TakePicturePage> {
                               20.0, // Adjust this value to increase or decrease the text size
                         ),
                       ),
-                      
                     ),
                   )
                 ],
@@ -249,55 +246,4 @@ class _TakePicturePageState extends State<TakePicturePage> {
           ),
         ));
   }
-
-  // Widget _buildImageField(BuildContext context, ImagesProvider imageProvider,
-  //     String field, String labelText) {
-  //   final file = imageProvider.selectedImageFiles[field];
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: [
-  //       Text(
-  //         labelText,
-  //         style: const TextStyle(
-  //           fontSize: 20,
-  //         ),
-  //       ),
-  //       const SizedBox(height: 10),
-  //       Row(
-  //         children: [
-  //           Expanded(
-  //             child: Container(
-  //               height: 200,
-  //               decoration: BoxDecoration(
-  //                 borderRadius: BorderRadius.circular(20),
-  //                 border: Border.all(
-  //                   color: Colors.grey,
-  //                 ),
-  //               ),
-  //               child: file == null
-  //                   ? const Center(
-  //                       child: Text(
-  //                         'ยังไม่มีรูปภาพ',
-  //                         style: TextStyle(
-  //                           fontSize: 15,
-  //                         ),
-  //                       ),
-  //                     )
-  //                   : Image.file(file),
-  //             ),
-  //           ),
-  //           IconButton(
-  //             onPressed: () => getImage(context, field),
-  //             icon: const Icon(Icons.camera_alt),
-  //           ),
-  //           IconButton(
-  //             onPressed: () => deleteImage(context, field),
-  //             icon: const Icon(Icons.close_rounded),
-  //           ),
-  //           const SizedBox(height: 20),
-  //         ],
-  //       ),
-  //     ],
-  //   );
-  // } //this one use to create a image field
 }

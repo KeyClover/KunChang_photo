@@ -6,12 +6,11 @@ import 'package:kunchang_photo/database/images_db_sqlite.dart';
 
 class ImagesProvider with ChangeNotifier {
   List<ImagesModel> _images = [];
-
   late ImagesDB _imagesDB;
-  Map<String, File?> _selectedImageFiles = {};
+  Map<String, List<File>> _selectedImageFiles = {};
 
   List<ImagesModel> get images => _images;
-  Map<String, File?> get selectedImageFiles => _selectedImageFiles;
+  Map<String, List<File>> get selectedImageFiles => _selectedImageFiles;
 
   ImagesProvider() {
     _imagesDB = ImagesDB();
@@ -28,20 +27,23 @@ class ImagesProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void setSelectedImageFile(String field, File? file) async {
-    _selectedImageFiles[field] = file;
+  void addSelectedImageFile(String field, File imageFile) async { 
+   if (_selectedImageFiles[field] == null) {
+      _selectedImageFiles[field] = [];
+    }
+    _selectedImageFiles[field]!.add(imageFile);
     notifyListeners();
   }
 
-  Future<void> deleteFromDatabase(String field) async {
-    final imageFile = _selectedImageFiles[field];
+  Future<void> deleteFromDatabase(String field, int index) async {
+    final imageFile = _selectedImageFiles[field]?[index];
     if (imageFile != null) {
       await imageFile.delete();
 
       final filePath = imageFile.path;
       await ImagesDB().deleteImage(field, filePath);
 
-      _selectedImageFiles[field] = null;
+      _selectedImageFiles[field]?.removeAt(index);
       notifyListeners();
     }
   }

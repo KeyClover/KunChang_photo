@@ -1,12 +1,12 @@
 class ImagesModel {
   int? id;
-  String? fieldcardImage;
-  String? frontImage;
-  String? backImage;
-  String? leftSide;
-  String? rightSide;
-  String? carRegistrationPlate;
-  String? chassis;
+  List<String>? fieldcardImage;
+  List<String>? frontImage;
+  List<String>? backImage;
+  List<String>? leftSide;
+  List<String>? rightSide;
+  List<String>? carRegistrationPlate;
+  List<String>? chassis;
 
   ImagesModel(
       {this.id,
@@ -20,25 +20,25 @@ class ImagesModel {
 
   Map<String, dynamic> toMap() {
     return {
-      'fieldcardImage': fieldcardImage,
-      'frontImage': frontImage,
-      'backImage': backImage,
-      'leftSide': leftSide,
-      'rightSide': rightSide,
-      'carRegistrationPlate': carRegistrationPlate,
-      'chassis': chassis,
+         'fieldcardImage': fieldcardImage?.join(','),
+      'frontImage': frontImage?.join(','),
+      'backImage': backImage?.join(','),
+      'leftSide': leftSide?.join(','),
+      'rightSide': rightSide?.join(','),
+      'carRegistrationPlate': carRegistrationPlate?.join(','),
+      'chassis': chassis?.join(','),
     };
   }
 
   factory ImagesModel.fromMap(Map<String, dynamic> map) {
     return ImagesModel(
-      fieldcardImage: map['fieldcardImage'],
-      frontImage: map['frontImage'],
-      backImage: map['backImage'],
-      leftSide: map['leftSide'],
-      rightSide: map['rightSide'],
-      carRegistrationPlate: map['carRegistrationPlate'],
-      chassis: map['chassis'],
+       fieldcardImage: map['fieldcardImage']?.split(','),
+      frontImage: map['frontImage']?.split(','),
+      backImage: map['backImage']?.split(','),
+      leftSide: map['leftSide']?.split(','),
+      rightSide: map['rightSide']?.split(','),
+      carRegistrationPlate: map['carRegistrationPlate']?.split(','),
+      chassis: map['chassis']?.split(','),
     );
   }
 }
