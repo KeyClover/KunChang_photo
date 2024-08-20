@@ -27,20 +27,20 @@ class BlankPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               IconButton(
-                icon: Icon(Icons.home),
+                icon: const Icon(Icons.home),
                 onPressed: () {},
               ),
               IconButton(
-                icon: Icon(Icons.search),
+                icon: const Icon(Icons.search),
                 onPressed: () {},
               ),
-              SizedBox(width: 48.0), // Space for the FAB
+              const SizedBox(width: 48.0), // Space for the FAB
               IconButton(
-                icon: Icon(Icons.notifications),
+                icon: const Icon(Icons.notifications),
                 onPressed: () {},
               ),
               IconButton(
-                icon: Icon(Icons.account_circle),
+                icon: const Icon(Icons.account_circle),
                 onPressed: () {},
               ),
             ],

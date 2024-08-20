@@ -13,7 +13,10 @@ class DisplayImagePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Display Images'),
+        title: const Text(
+          'Display Images',
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: HexColor("#2e3150"),
       ),
       body: Padding(
@@ -21,49 +24,57 @@ class DisplayImagePage extends StatelessWidget {
         child: ListView(
           children: [
             if (imagesModel.fieldcardImage != null)
-              ...imagesModel.fieldcardImage!.map((imagePath) =>
-                  ImageDisplayField(
-                    labelText: 'ใบฟิว',
-                    imagePath: imagePath,
-                  )). toList(),
+              ...imagesModel.fieldcardImage!
+                  .map((imagePath) => ImageDisplayField(
+                        labelText: 'ใบฟิว',
+                        imagePath: imagePath,
+                      ))
+                  .toList(),
             if (imagesModel.frontImage != null)
-              ...imagesModel.frontImage!.map((imagePath) =>
-                  ImageDisplayField(
-                    labelText: 'ข้างหน้ารถ',
-                    imagePath: imagePath,
-                  )).toList(),
+              ...imagesModel.frontImage!
+                  .map((imagePath) => ImageDisplayField(
+                        labelText: 'ข้างหน้ารถ',
+                        imagePath: imagePath,
+                      ))
+                  .toList(),
             if (imagesModel.backImage != null)
-              ...imagesModel.backImage!.map((imagePath) =>
-                  ImageDisplayField(
-                    labelText: 'ข้างหลลังรถ',
-                    imagePath: imagePath,
-                  )).toList(),
+              ...imagesModel.backImage!
+                  .map((imagePath) => ImageDisplayField(
+                        labelText: 'ข้างหลังรถ',
+                        imagePath: imagePath,
+                      ))
+                  .toList(),
             if (imagesModel.leftSide != null)
-              ...imagesModel.leftSide!.map((imagePath) =>
-                  ImageDisplayField(
-                    labelText: 'ข้างซ้ายรถ',
-                    imagePath: imagePath,
-                  )).toList(),
+              ...imagesModel.leftSide!
+                  .map((imagePath) => ImageDisplayField(
+                        labelText: 'ข้างซ้ายรถ',
+                        imagePath: imagePath,
+                      ))
+                  .toList(),
             if (imagesModel.rightSide != null)
-              ...imagesModel.rightSide!.map((imagePath) =>
-                  ImageDisplayField(
-                    labelText: 'ข้างขวารถ',
-                    imagePath: imagePath,
-                  )).toList(),
+              ...imagesModel.rightSide!
+                  .map((imagePath) => ImageDisplayField(
+                        labelText: 'ข้างขวารถ',
+                        imagePath: imagePath,
+                      ))
+                  .toList(),
             if (imagesModel.carRegistrationPlate != null)
-              ...imagesModel.carRegistrationPlate!.map((imagePath) =>
-                  ImageDisplayField(
-                    labelText: 'ทะเบียนรถ',
-                    imagePath: imagePath,
-                  )).toList(),
+              ...imagesModel.carRegistrationPlate!
+                  .map((imagePath) => ImageDisplayField(
+                        labelText: 'ทะเบียนรถ',
+                        imagePath: imagePath,
+                      ))
+                  .toList(),
             if (imagesModel.chassis != null)
-              ...imagesModel.chassis!.map((imagePath) =>
-                  ImageDisplayField(
-                    labelText: 'ตัวถังรถ',
-                    imagePath: imagePath,
-              
-              ),
-        ).toList()],
+              ...imagesModel.chassis!
+                  .map(
+                    (imagePath) => ImageDisplayField(
+                      labelText: 'ตัวถังรถ',
+                      imagePath: imagePath,
+                    ),
+                  )
+                  .toList()
+          ],
         ),
       ),
     );

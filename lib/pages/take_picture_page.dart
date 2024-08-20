@@ -31,6 +31,9 @@ class _TakePicturePageState extends State<TakePicturePage> {
     'chassisImage': 'ตัวถังรถ',
   };
 
+  
+
+
   void getImage(BuildContext context, String field) async {
     final ImagePicker _picker = ImagePicker();
 
@@ -62,6 +65,8 @@ class _TakePicturePageState extends State<TakePicturePage> {
       Provider.of<ImagesProvider>(context, listen: false)
           .addSelectedImageFile(field, imageFile);
     }
+
+   
   } // this is for getting the images
 
   void deleteImage(BuildContext context, String field, int index) async {
@@ -100,9 +105,10 @@ class _TakePicturePageState extends State<TakePicturePage> {
     }
   } // This is for deleting the images
 
+ 
   @override
   Widget build(BuildContext context) {
-    // final imageProvider = Provider.of<ImagesProvider>(context);
+    
 
     return Scaffold(
         appBar: AppBar(
@@ -112,11 +118,45 @@ class _TakePicturePageState extends State<TakePicturePage> {
             children: [
               IconButton(
                 onPressed: () {
+                  final imageProvider = Provider.of<ImagesProvider>(
+                              context,
+                              listen: false);
+                  final images = ImagesModel(
+
+                    fieldcardImage: imageProvider
+                                .selectedImageFiles['fieldcardImage']
+                                ?.map((file) => file.path)
+                                .toList(),
+                            frontImage: imageProvider
+                                .selectedImageFiles['frontImage']
+                                ?.map((file) => file.path)
+                                .toList(),
+                            backImage: imageProvider
+                                .selectedImageFiles['backImage']
+                                ?.map((file) => file.path)
+                                .toList(),
+                            leftSide: imageProvider
+                                .selectedImageFiles['leftSide']
+                                ?.map((file) => file.path)
+                                .toList(),
+                            rightSide: imageProvider
+                                .selectedImageFiles['rightSide']
+                                ?.map((file) => file.path)
+                                .toList(),
+                            carRegistrationPlate: imageProvider
+                                .selectedImageFiles['carRegistrationPlate']
+                                ?.map((file) => file.path)
+                                .toList(),
+                            chassis: imageProvider.selectedImageFiles['chassis']
+                                ?.map((file) => file.path)
+                                .toList(),
+                  );
                   Navigator.push(
                     context,
+                    
                     MaterialPageRoute(
                       builder: (context) =>
-                          const BlankPage(), // put the page you want it to redirect you to
+                           DisplayImagePage(imagesModel: images), // put the page you want it to redirect you to
                     ),
                   );
                 },
@@ -171,6 +211,7 @@ class _TakePicturePageState extends State<TakePicturePage> {
                   ),
                   SizedBox(
                     width: double.infinity,
+                    
                     child: ElevatedButton(
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
@@ -213,11 +254,13 @@ class _TakePicturePageState extends State<TakePicturePage> {
                                   listen: false)
                               .addNewImages(images);
 
+                        
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('บันทึกสำเร็จ'),
-                            ),
-                          );
+                          const SnackBar(
+                            content: Text('บันทึกสำเร็จ'),
+                          ),
+                        );
+                                                  
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -227,7 +270,9 @@ class _TakePicturePageState extends State<TakePicturePage> {
                           );
                         }
                       },
+                      
                       style: ElevatedButton.styleFrom(
+                        alignment: Alignment.bottomCenter,
                         minimumSize: const Size(100, 50),
                         padding: const EdgeInsets.all(10),
                       ),

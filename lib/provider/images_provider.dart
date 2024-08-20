@@ -27,6 +27,8 @@ class ImagesProvider with ChangeNotifier {
     notifyListeners();
   }
 
+   
+
   void addSelectedImageFile(String field, File imageFile) async { 
    if (_selectedImageFiles[field] == null) {
       _selectedImageFiles[field] = [];
