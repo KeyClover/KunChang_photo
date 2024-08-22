@@ -7,6 +7,7 @@ class ImagesModel {
   List<String>? rightSide;
   List<String>? carRegistrationPlate;
   List<String>? chassis;
+  
 
   ImagesModel(
       {this.id,

@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kunchang_photo/models/images_model.dart';
-import 'package:kunchang_photo/pages/blank_page.dart';
+// import 'package:kunchang_photo/pages/blank_page.dart';
 import 'package:kunchang_photo/pages/display_image.dart';
 import 'package:kunchang_photo/provider/images_provider.dart';
 import 'package:provider/provider.dart';
@@ -105,6 +105,38 @@ class _TakePicturePageState extends State<TakePicturePage> {
     }
   } // This is for deleting the images
 
+  void saveImage(BuildContext context) async {
+  final imageProvider = Provider.of<ImagesProvider>(context, listen: false);
+  
+  final images = ImagesModel(
+    fieldcardImage: imageProvider.selectedImageFiles['fieldcardImage']?.map((file) => file.path).toList(),
+    frontImage: imageProvider.selectedImageFiles['frontImage']?.map((file) => file.path).toList(),
+    backImage: imageProvider.selectedImageFiles['backImage']?.map((file) => file.path).toList(),
+    leftSide: imageProvider.selectedImageFiles['leftSide']?.map((file) => file.path).toList(),
+    rightSide: imageProvider.selectedImageFiles['rightSide']?.map((file) => file.path).toList(),
+    carRegistrationPlate: imageProvider.selectedImageFiles['carRegistrationPlate']?.map((file) => file.path).toList(),
+    chassis: imageProvider.selectedImageFiles['chassis']?.map((file) => file.path).toList(),
+  );
+
+  // Save images to the database
+  await imageProvider.addNewImages(images);
+
+  // Clear the image field after saving
+  imageProvider.clearSelectedImageFile(_selectedField!);
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(content: Text('บันทึกสำเร็จ')),
+  );
+
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => DisplayImagePage(imagesModel: images,),
+    ),
+  );
+}
+
+
  
   @override
   Widget build(BuildContext context) {
@@ -121,44 +153,7 @@ class _TakePicturePageState extends State<TakePicturePage> {
                   final imageProvider = Provider.of<ImagesProvider>(
                               context,
                               listen: false);
-                  final images = ImagesModel(
-
-                    fieldcardImage: imageProvider
-                                .selectedImageFiles['fieldcardImage']
-                                ?.map((file) => file.path)
-                                .toList(),
-                            frontImage: imageProvider
-                                .selectedImageFiles['frontImage']
-                                ?.map((file) => file.path)
-                                .toList(),
-                            backImage: imageProvider
-                                .selectedImageFiles['backImage']
-                                ?.map((file) => file.path)
-                                .toList(),
-                            leftSide: imageProvider
-                                .selectedImageFiles['leftSide']
-                                ?.map((file) => file.path)
-                                .toList(),
-                            rightSide: imageProvider
-                                .selectedImageFiles['rightSide']
-                                ?.map((file) => file.path)
-                                .toList(),
-                            carRegistrationPlate: imageProvider
-                                .selectedImageFiles['carRegistrationPlate']
-                                ?.map((file) => file.path)
-                                .toList(),
-                            chassis: imageProvider.selectedImageFiles['chassis']
-                                ?.map((file) => file.path)
-                                .toList(),
-                  );
-                  Navigator.push(
-                    context,
-                    
-                    MaterialPageRoute(
-                      builder: (context) =>
-                           DisplayImagePage(imagesModel: images), // put the page you want it to redirect you to
-                    ),
-                  );
+                  saveImage(context);
                 },
                 icon: const Icon(
                   Icons.arrow_back,
@@ -216,58 +211,9 @@ class _TakePicturePageState extends State<TakePicturePage> {
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
                          // _formKey.currentState!.save();
-                          final imageProvider = Provider.of<ImagesProvider>(
-                              context,
-                              listen: false);
+                      
 
-                          final images = ImagesModel(
-                            fieldcardImage: imageProvider
-                                .selectedImageFiles['fieldcardImage']
-                                ?.map((file) => file.path)
-                                .toList(),
-                            frontImage: imageProvider
-                                .selectedImageFiles['frontImage']
-                                ?.map((file) => file.path)
-                                .toList(),
-                            backImage: imageProvider
-                                .selectedImageFiles['backImage']
-                                ?.map((file) => file.path)
-                                .toList(),
-                            leftSide: imageProvider
-                                .selectedImageFiles['leftSide']
-                                ?.map((file) => file.path)
-                                .toList(),
-                            rightSide: imageProvider
-                                .selectedImageFiles['rightSide']
-                                ?.map((file) => file.path)
-                                .toList(),
-                            carRegistrationPlate: imageProvider
-                                .selectedImageFiles['carRegistrationPlate']
-                                ?.map((file) => file.path)
-                                .toList(),
-                            chassis: imageProvider.selectedImageFiles['chassis']
-                                ?.map((file) => file.path)
-                                .toList(),
-                          );
-
-                          await Provider.of<ImagesProvider>(context,
-                                  listen: false)
-                              .addNewImages(images);
-
-                        
-                          ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('บันทึกสำเร็จ'),
-                          ),
-                        );
-                                                  
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  DisplayImagePage(imagesModel: images),
-                            ),
-                          );
+                          saveImage(context);
                         }
                       },
                       

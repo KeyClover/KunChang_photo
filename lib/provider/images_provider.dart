@@ -17,24 +17,23 @@ class ImagesProvider with ChangeNotifier {
   }
 
   Future<void> addNewImages(ImagesModel images) async {
-    await ImagesDB().insertImage(images);
+    await _imagesDB.insertImage(images);
     await fetchImages();
     notifyListeners();
   }
 
   Future<void> fetchImages() async {
-    _images = await ImagesDB().getImageDB();
+    List<ImagesModel> imagesFromDB = await _imagesDB.getImageDB();
+    _images = imagesFromDB;
     notifyListeners();
   }
 
-   
-
-  void addSelectedImageFile(String field, File imageFile) async { 
-   if (_selectedImageFiles[field] == null) {
-      _selectedImageFiles[field] = [];
-    }
-    _selectedImageFiles[field]!.add(imageFile);
-    notifyListeners();
+  void addSelectedImageFile(String field, File imageFile) async {
+     if (_selectedImageFiles[field] == null) {
+        _selectedImageFiles[field] = [];
+      }
+      _selectedImageFiles[field]!.add(imageFile);
+      notifyListeners();
   }
 
   Future<void> deleteFromDatabase(String field, int index) async {
@@ -48,5 +47,10 @@ class ImagesProvider with ChangeNotifier {
       _selectedImageFiles[field]?.removeAt(index);
       notifyListeners();
     }
+  }
+
+  void clearSelectedImageFile(String field) {
+    _selectedImageFiles[field]?.clear();
+    notifyListeners();
   }
 }
