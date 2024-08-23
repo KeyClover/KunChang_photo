@@ -25,10 +25,10 @@ class _TakePicturePageState extends State<TakePicturePage> {
     'fieldcardImage': 'ใบฟิว',
     'frontImage': 'ข้างหน้ารถ',
     'backImage': 'ข้างหลังรถ',
-    'leftSideImage': 'ข้างซ้ายรถ',
-    'rightSideImage': 'ข้างขวารถ',
-    'carRegistrationPlateImage': 'ทะเบียนรถ',
-    'chassisImage': 'ตัวถังรถ',
+    'leftSide': 'ข้างซ้ายรถ',
+    'rightSide': 'ข้างขวารถ',
+    'carRegistrationPlate': 'ทะเบียนรถ',
+    'chassis': 'ตัวถังรถ',
   };
 
   
