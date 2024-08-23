@@ -36,7 +36,18 @@ class ImagesProvider with ChangeNotifier {
       notifyListeners();
   }
 
-  Future<void> deleteFromDatabase(String field, int index) async {
+  Future<void> deleteFromDatabaseDisplay(String columnName, String filePath) async {
+    
+    // Delete the image from the database
+    await _imagesDB.deleteImage(columnName, filePath);
+
+    // Remove the image from the in-memory list
+    _selectedImageFiles[columnName]?.removeWhere((file) => file.path == filePath);
+
+    notifyListeners(); // Notify listeners to update the UI
+  }
+
+  Future<void> deleteFromDatabaseTakepicture(String field, int index) async {
     final imageFile = _selectedImageFiles[field]?[index];
     if (imageFile != null) {
       await imageFile.delete();

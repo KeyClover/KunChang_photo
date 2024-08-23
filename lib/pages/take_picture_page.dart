@@ -22,7 +22,7 @@ class _TakePicturePageState extends State<TakePicturePage> {
   String? _selectedField = 'fieldcardImage';
 
   final Map<String, String> _fieldLabels = {
-    'fieldcardImage': 'ใบฟิว',
+    'fieldcardImage': 'ใบฟิล',
     'frontImage': 'ข้างหน้ารถ',
     'backImage': 'ข้างหลังรถ',
     'leftSide': 'ข้างซ้ายรถ',
@@ -30,9 +30,6 @@ class _TakePicturePageState extends State<TakePicturePage> {
     'carRegistrationPlate': 'ทะเบียนรถ',
     'chassis': 'ตัวถังรถ',
   };
-
-  
-
 
   void getImage(BuildContext context, String field) async {
     final ImagePicker _picker = ImagePicker();
@@ -65,8 +62,6 @@ class _TakePicturePageState extends State<TakePicturePage> {
       Provider.of<ImagesProvider>(context, listen: false)
           .addSelectedImageFile(field, imageFile);
     }
-
-   
   } // this is for getting the images
 
   void deleteImage(BuildContext context, String field, int index) async {
@@ -94,7 +89,7 @@ class _TakePicturePageState extends State<TakePicturePage> {
       );
 
       if (result == true) {
-        await imageProvider.deleteFromDatabase(field, index);
+        await imageProvider.deleteFromDatabaseTakepicture(field, index);
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -106,69 +101,90 @@ class _TakePicturePageState extends State<TakePicturePage> {
   } // This is for deleting the images
 
   void saveImage(BuildContext context) async {
-  final imageProvider = Provider.of<ImagesProvider>(context, listen: false);
-  
-  final images = ImagesModel(
-    fieldcardImage: imageProvider.selectedImageFiles['fieldcardImage']?.map((file) => file.path).where((path) => path.isNotEmpty).toList(),
-    frontImage: imageProvider.selectedImageFiles['frontImage']?.map((file) => file.path).where((path) => path.isNotEmpty).toList(),
-    backImage: imageProvider.selectedImageFiles['backImage']?.map((file) => file.path).where((path) => path.isNotEmpty).toList(),
-    leftSide: imageProvider.selectedImageFiles['leftSide']?.map((file) => file.path).where((path) => path.isNotEmpty).toList(),
-    rightSide: imageProvider.selectedImageFiles['rightSide']?.map((file) => file.path).where((path) => path.isNotEmpty).toList(),
-    carRegistrationPlate: imageProvider.selectedImageFiles['carRegistrationPlate']?.map((file) => file.path).where((path) => path.isNotEmpty).toList(),
-    chassis: imageProvider.selectedImageFiles['chassis']?.map((file) => file.path).where((path) => path.isNotEmpty).toList(),
-  );
+    final imageProvider = Provider.of<ImagesProvider>(context, listen: false);
 
-  // Save images to the database
-  await imageProvider.addNewImages(images);
+    final images = ImagesModel(
+      fieldcardImage: imageProvider.selectedImageFiles['fieldcardImage']
+          ?.map((file) => file.path)
+          .where((path) => path.isNotEmpty)
+          .toList(),
+      frontImage: imageProvider.selectedImageFiles['frontImage']
+          ?.map((file) => file.path)
+          .where((path) => path.isNotEmpty)
+          .toList(),
+      backImage: imageProvider.selectedImageFiles['backImage']
+          ?.map((file) => file.path)
+          .where((path) => path.isNotEmpty)
+          .toList(),
+      leftSide: imageProvider.selectedImageFiles['leftSide']
+          ?.map((file) => file.path)
+          .where((path) => path.isNotEmpty)
+          .toList(),
+      rightSide: imageProvider.selectedImageFiles['rightSide']
+          ?.map((file) => file.path)
+          .where((path) => path.isNotEmpty)
+          .toList(),
+      carRegistrationPlate: imageProvider
+          .selectedImageFiles['carRegistrationPlate']
+          ?.map((file) => file.path)
+          .where((path) => path.isNotEmpty)
+          .toList(),
+      chassis: imageProvider.selectedImageFiles['chassis']
+          ?.map((file) => file.path)
+          .where((path) => path.isNotEmpty)
+          .toList(),
+    );
 
-  // Clear the image field after saving
-  imageProvider.clearSelectedImageFile(_selectedField!);
+    // Save images to the database
+    await imageProvider.addNewImages(images);
 
-  ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(content: Text('บันทึกสำเร็จ')),
-  );
+    // Clear the image field after saving
+    imageProvider.clearSelectedImageFile(_selectedField!);
 
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => const DisplayImagePage(),
-    ),
-  );
-}
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('บันทึกสำเร็จ')),
+    );
 
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const DisplayImagePage(),
+      ),
+    );
+  }
 
- 
   @override
   Widget build(BuildContext context) {
-    
-
     return Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
           backgroundColor: HexColor("#2e3150"),
-          title: Row(
+          title: Stack(
             children: [
-              IconButton(
-                onPressed: () {
-                  final imageProvider = Provider.of<ImagesProvider>(
-                              context,
-                              listen: false);
-                  saveImage(context);
-                },
-                icon: const Icon(
-                  Icons.arrow_back,
-                  color: Colors.white,
+              Align(
+                alignment: Alignment.centerLeft,
+                child: IconButton(
+                  onPressed: () {
+                    saveImage(context);
+                  },
+                  icon: const Icon(
+                    Icons.arrow_back_ios_new,
+                    color: Colors.white,
+                  ),
                 ),
               ),
-              const SizedBox(width: 8),
-              const Text(
-                'รูปภาพ',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 26,
+              const Align(
+                alignment: Alignment.center,
+                child: Text(
+                  'รูปภาพ',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 26,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ),
-            ],  
+            ],
           ),
         ),
         body: Container(
@@ -206,17 +222,12 @@ class _TakePicturePageState extends State<TakePicturePage> {
                   ),
                   SizedBox(
                     width: double.infinity,
-                    
                     child: ElevatedButton(
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                         // _formKey.currentState!.save();
-                      
-
                           saveImage(context);
                         }
                       },
-                      
                       style: ElevatedButton.styleFrom(
                         alignment: Alignment.bottomCenter,
                         minimumSize: const Size(100, 50),
