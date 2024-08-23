@@ -44,6 +44,7 @@ class CustomImageField extends StatelessWidget {
                 getImage(context, field);
               },
               child: file != null
+              
                   ? Stack(
                       children: [
                         ClipRRect(

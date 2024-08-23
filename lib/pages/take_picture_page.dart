@@ -109,13 +109,13 @@ class _TakePicturePageState extends State<TakePicturePage> {
   final imageProvider = Provider.of<ImagesProvider>(context, listen: false);
   
   final images = ImagesModel(
-    fieldcardImage: imageProvider.selectedImageFiles['fieldcardImage']?.map((file) => file.path).toList(),
-    frontImage: imageProvider.selectedImageFiles['frontImage']?.map((file) => file.path).toList(),
-    backImage: imageProvider.selectedImageFiles['backImage']?.map((file) => file.path).toList(),
-    leftSide: imageProvider.selectedImageFiles['leftSide']?.map((file) => file.path).toList(),
-    rightSide: imageProvider.selectedImageFiles['rightSide']?.map((file) => file.path).toList(),
-    carRegistrationPlate: imageProvider.selectedImageFiles['carRegistrationPlate']?.map((file) => file.path).toList(),
-    chassis: imageProvider.selectedImageFiles['chassis']?.map((file) => file.path).toList(),
+    fieldcardImage: imageProvider.selectedImageFiles['fieldcardImage']?.map((file) => file.path).where((path) => path.isNotEmpty).toList(),
+    frontImage: imageProvider.selectedImageFiles['frontImage']?.map((file) => file.path).where((path) => path.isNotEmpty).toList(),
+    backImage: imageProvider.selectedImageFiles['backImage']?.map((file) => file.path).where((path) => path.isNotEmpty).toList(),
+    leftSide: imageProvider.selectedImageFiles['leftSide']?.map((file) => file.path).where((path) => path.isNotEmpty).toList(),
+    rightSide: imageProvider.selectedImageFiles['rightSide']?.map((file) => file.path).where((path) => path.isNotEmpty).toList(),
+    carRegistrationPlate: imageProvider.selectedImageFiles['carRegistrationPlate']?.map((file) => file.path).where((path) => path.isNotEmpty).toList(),
+    chassis: imageProvider.selectedImageFiles['chassis']?.map((file) => file.path).where((path) => path.isNotEmpty).toList(),
   );
 
   // Save images to the database
@@ -131,7 +131,7 @@ class _TakePicturePageState extends State<TakePicturePage> {
   Navigator.push(
     context,
     MaterialPageRoute(
-      builder: (context) => DisplayImagePage(imagesModel: images,),
+      builder: (context) => const DisplayImagePage(),
     ),
   );
 }
@@ -168,7 +168,7 @@ class _TakePicturePageState extends State<TakePicturePage> {
                   fontSize: 26,
                 ),
               ),
-            ],
+            ],  
           ),
         ),
         body: Container(
