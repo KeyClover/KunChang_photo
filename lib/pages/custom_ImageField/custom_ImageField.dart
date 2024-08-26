@@ -66,7 +66,7 @@ class CustomImageField extends StatelessWidget {
                       ],
                     )
                   : const SizedBox(
-                      height: 350,
+                      height: 400,
                       child: Center(
                         child: Icon(
                           Icons.camera_alt,

@@ -36,6 +36,16 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
     'ตัวถังรถ': 'chassis',
   };
 
+   @override
+  void initState() {
+    super.initState();
+    // Recalculate when returning to the page
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {});
+    });
+  }
+
+
   Future<List<ImagesModel>> fetchAllImagesFromDB(BuildContext context) async {
     final imageProvider = Provider.of<ImagesProvider>(context, listen: false);
     await imageProvider.fetchImages(); // Fetch images from the database
@@ -68,10 +78,13 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
     );
     if (confirmDelete) {
       await imageProvider.deleteFromDatabaseDisplay(columnName!, imagePath);
-      setState(() {});
-      ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('ลบรูปสำเร็จ')),
-    );
+      final updatedImages = await fetchAllImagesFromDB(context);
+      final fieldHasImages = _checkFieldsWithImages(updatedImages);
+      setState(() {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('ลบรูปสำเร็จ')),
+        );
+      });
     }
   }
 
@@ -88,10 +101,12 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
     };
 
     for (final imagesModel in allImages) {
-      if (imagesModel.fieldcardImage != null && imagesModel.fieldcardImage!.isNotEmpty) {
+      if (imagesModel.fieldcardImage != null &&
+          imagesModel.fieldcardImage!.isNotEmpty) {
         fieldHasImages['ใบฟิล'] = true;
       }
-      if (imagesModel.frontImage != null && imagesModel.frontImage!.isNotEmpty) {
+      if (imagesModel.frontImage != null &&
+          imagesModel.frontImage!.isNotEmpty) {
         fieldHasImages['ข้างหน้ารถ'] = true;
       }
       if (imagesModel.backImage != null && imagesModel.backImage!.isNotEmpty) {
@@ -103,7 +118,8 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
       if (imagesModel.rightSide != null && imagesModel.rightSide!.isNotEmpty) {
         fieldHasImages['ข้างขวารถ'] = true;
       }
-      if (imagesModel.carRegistrationPlate != null && imagesModel.carRegistrationPlate!.isNotEmpty) {
+      if (imagesModel.carRegistrationPlate != null &&
+          imagesModel.carRegistrationPlate!.isNotEmpty) {
         fieldHasImages['ทะเบียนรถ'] = true;
       }
       if (imagesModel.chassis != null && imagesModel.chassis!.isNotEmpty) {
@@ -166,9 +182,9 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
-              return const Center(child: Text('Error loading images'));
+              return const Center(child: Text('เกิดข้อผิดพลาดในการโหลดรูปภาพ'));
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Center(child: Text('No images available'));
+              return const Center(child: Text('ไม่มีรูป'));
             } else {
               final allImages = snapshot.data!;
               final fieldHasImages = _checkFieldsWithImages(allImages);
@@ -180,10 +196,10 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: DropdownButton<String>(
-
                       borderRadius: BorderRadius.circular(20),
                       value: _selectedFilter,
-                      items: fieldHasImages.keys.map<DropdownMenuItem<String>>((String value) {
+                      items: fieldHasImages.keys
+                          .map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
                           child: Row(
@@ -191,7 +207,9 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
                             children: [
                               Text(value),
                               if (fieldHasImages[value] == true)
-                                const Icon(Icons.done, color: Colors.green), // Display the done icon
+                                const Icon(Icons.done,
+                                    color:
+                                        Colors.green), // Display the done icon
                             ],
                           ),
                         );
@@ -220,7 +238,7 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
     );
   }
 
- // Build the filtered images based on the selected filter
+  // Build the filtered images based on the selected filter
   List<Widget> _buildFilteredImages(List<ImagesModel> allImages) {
     final List<Widget> imageWidgets = [];
 
@@ -248,8 +266,6 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
 
     return imageWidgets;
   }
-
-  
 
   List<String>? _getImagePathsByLabel(ImagesModel imagesModel, String label) {
     switch (label) {
@@ -334,6 +350,3 @@ class ImageDisplayField extends StatelessWidget {
     );
   }
 }
-
-
-

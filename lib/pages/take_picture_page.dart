@@ -100,51 +100,31 @@ class _TakePicturePageState extends State<TakePicturePage> {
     }
   } // This is for deleting the images
 
-  bool hasAnyImages(ImagesModel images){
-    return[
- images.fieldcardImage,
-    images.frontImage,
-    images.backImage,
-    images.leftSide,
-    images.rightSide,
-    images.carRegistrationPlate,
-    images.chassis,
-    ].any((imageList)=> imageList != null && imageList.isNotEmpty);
+  bool hasAnyImages(ImagesModel images) {
+    return [
+      images.fieldcardImage,
+      images.frontImage,
+      images.backImage,
+      images.leftSide,
+      images.rightSide,
+      images.carRegistrationPlate,
+      images.chassis,
+    ].any((imageList) => imageList != null && imageList.isNotEmpty);
   }
 
   void saveImage(BuildContext context) async {
     final imageProvider = Provider.of<ImagesProvider>(context, listen: false);
 
     final images = ImagesModel(
-      fieldcardImage: imageProvider.selectedImageFiles['fieldcardImage']
-          ?.map((file) => file.path)
-          .where((path) => path.isNotEmpty)
-          .toList(),
-      frontImage: imageProvider.selectedImageFiles['frontImage']
-          ?.map((file) => file.path)
-          .where((path) => path.isNotEmpty)
-          .toList(),
-      backImage: imageProvider.selectedImageFiles['backImage']
-          ?.map((file) => file.path)
-          .where((path) => path.isNotEmpty)
-          .toList(),
-      leftSide: imageProvider.selectedImageFiles['leftSide']
-          ?.map((file) => file.path)
-          .where((path) => path.isNotEmpty)
-          .toList(),
-      rightSide: imageProvider.selectedImageFiles['rightSide']
-          ?.map((file) => file.path)
-          .where((path) => path.isNotEmpty)
-          .toList(),
-      carRegistrationPlate: imageProvider
-          .selectedImageFiles['carRegistrationPlate']
-          ?.map((file) => file.path)
-          .where((path) => path.isNotEmpty)
-          .toList(),
-      chassis: imageProvider.selectedImageFiles['chassis']
-          ?.map((file) => file.path)
-          .where((path) => path.isNotEmpty)
-          .toList(),
+      fieldcardImage:
+          _filterEmpty(imageProvider.selectedImageFiles['fieldcardImage']),
+      frontImage: _filterEmpty(imageProvider.selectedImageFiles['frontImage']),
+      backImage: _filterEmpty(imageProvider.selectedImageFiles['backImage']),
+      leftSide: _filterEmpty(imageProvider.selectedImageFiles['leftSide']),
+      rightSide: _filterEmpty(imageProvider.selectedImageFiles['rightSide']),
+      carRegistrationPlate: _filterEmpty(
+          imageProvider.selectedImageFiles['carRegistrationPlate']),
+      chassis: _filterEmpty(imageProvider.selectedImageFiles['chassis']),
     );
 
     // Save images to the database
@@ -153,11 +133,11 @@ class _TakePicturePageState extends State<TakePicturePage> {
     // Clear the image field after saving
     imageProvider.clearSelectedImageFile(_selectedField!);
 
-   if (hasAnyImages(images)) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(content: Text('บันทึกสำเร็จ')),
-  );
-}
+    if (hasAnyImages(images)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('บันทึกสำเร็จ')),
+      );
+    }
 
     Navigator.push(
       context,
@@ -165,6 +145,15 @@ class _TakePicturePageState extends State<TakePicturePage> {
         builder: (context) => const DisplayImagePage(),
       ),
     );
+  }
+
+  List<String>? _filterEmpty(List<File>? files) {
+    if (files == null || files.isEmpty) return null;
+    final nonEmptyPaths = files
+        .map((file) => file.path)
+        .where((path) => path.isNotEmpty)
+        .toList();
+    return nonEmptyPaths.isEmpty ? null : nonEmptyPaths;
   }
 
   @override

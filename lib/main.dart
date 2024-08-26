@@ -3,7 +3,6 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:kunchang_photo/pages/display_image.dart';
 import 'package:kunchang_photo/pages/take_picture_page.dart';
 import 'package:kunchang_photo/pages/blank_page.dart';
-
 import 'package:provider/single_child_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:kunchang_photo/provider/images_provider.dart';
