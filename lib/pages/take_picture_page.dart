@@ -93,7 +93,7 @@ class _TakePicturePageState extends State<TakePicturePage> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Image deleted'),
+            content: Text('ลบรูปภาพสำเร็จ'),
           ),
         );
       }
@@ -141,9 +141,9 @@ class _TakePicturePageState extends State<TakePicturePage> {
     // Clear the image field after saving
     imageProvider.clearSelectedImageFile(_selectedField!);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('บันทึกสำเร็จ')),
-    );
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //   const SnackBar(content: Text('บันทึกสำเร็จ')),
+    // );
 
     Navigator.push(
       context,
