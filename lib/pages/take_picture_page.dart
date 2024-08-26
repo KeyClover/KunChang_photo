@@ -100,6 +100,18 @@ class _TakePicturePageState extends State<TakePicturePage> {
     }
   } // This is for deleting the images
 
+  bool hasAnyImages(ImagesModel images){
+    return[
+ images.fieldcardImage,
+    images.frontImage,
+    images.backImage,
+    images.leftSide,
+    images.rightSide,
+    images.carRegistrationPlate,
+    images.chassis,
+    ].any((imageList)=> imageList != null && imageList.isNotEmpty);
+  }
+
   void saveImage(BuildContext context) async {
     final imageProvider = Provider.of<ImagesProvider>(context, listen: false);
 
@@ -141,9 +153,11 @@ class _TakePicturePageState extends State<TakePicturePage> {
     // Clear the image field after saving
     imageProvider.clearSelectedImageFile(_selectedField!);
 
-    // ScaffoldMessenger.of(context).showSnackBar(
-    //   const SnackBar(content: Text('บันทึกสำเร็จ')),
-    // );
+   if (hasAnyImages(images)) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(content: Text('บันทึกสำเร็จ')),
+  );
+}
 
     Navigator.push(
       context,
@@ -196,6 +210,7 @@ class _TakePicturePageState extends State<TakePicturePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   DropdownButton<String>(
+                    borderRadius: BorderRadius.circular(20),
                     value: _selectedField,
                     hint: const Text('Select Image Field'),
                     onChanged: (String? newValue) {

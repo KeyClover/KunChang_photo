@@ -51,16 +51,16 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Confirm Delete'),
-          content: const Text('Are you sure to delete the image?'),
+          title: const Text('ลบรูปภาพ'),
+          content: const Text('คุณแน่ใจหรือว่าต้องการลบรูปภาพ?'),
           actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancel'),
+              child: const Text('ยกเลิก'),
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Delete'),
+              child: const Text('ตกลง'),
             ),
           ],
         );
@@ -69,6 +69,9 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
     if (confirmDelete) {
       await imageProvider.deleteFromDatabaseDisplay(columnName!, imagePath);
       setState(() {});
+      ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('ลบรูปสำเร็จ')),
+    );
     }
   }
 
@@ -177,6 +180,8 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: DropdownButton<String>(
+
+                      borderRadius: BorderRadius.circular(20),
                       value: _selectedFilter,
                       items: fieldHasImages.keys.map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
@@ -308,7 +313,7 @@ class ImageDisplayField extends StatelessWidget {
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withOpacity(0.3),
                   spreadRadius: 1,
                   blurRadius: 8,
                   offset: const Offset(0, 4),

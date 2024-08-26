@@ -1,11 +1,11 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 // import 'package:circular_menu/circular_menu.dart';
 // import 'package:kunchang_photo/pages/take_picture_page.dart';
 // import 'package:hexcolor/hexcolor.dart';
 import 'package:freestyle_speed_dial/freestyle_speed_dial.dart';
 
+// This page is for Test speeddial widget
 class BlankPage extends StatelessWidget {
   const BlankPage({super.key});
 

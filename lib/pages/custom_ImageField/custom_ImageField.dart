@@ -51,7 +51,7 @@ class CustomImageField extends StatelessWidget {
                           borderRadius: BorderRadius.circular(20),
                           child: Image.file(
                             file,
-                            height: 500,
+                            height: 550,
                             width: double.infinity, // Adjust this if necessary
                             fit: BoxFit.cover,
                           ),

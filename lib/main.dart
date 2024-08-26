@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:kunchang_photo/pages/display_image.dart';
 import 'package:kunchang_photo/pages/take_picture_page.dart';
 import 'package:kunchang_photo/pages/blank_page.dart';
 
@@ -58,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
         body: const TabBarView(
           children: [
             TakePicturePage(),
-            BlankPage(),
+            DisplayImagePage(),
           ],
         ),
         backgroundColor: HexColor("#2e3150"),
