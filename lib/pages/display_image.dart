@@ -127,11 +127,19 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
       }
     }
 
-    // If any field has images, set 'รูปภาพทั้งหมด' to true // Will appear the check mark
+    // If every field has images, set 'รูปภาพทั้งหมด' to true // Will appear the check mark
 
-    // if (fieldHasImages.containsValue(true)) {
-    //   fieldHasImages['รูปภาพทั้งหมด'] = true;
-    // }
+    bool allFieldHaveImages = fieldHasImages['ใบฟิล'] == true &&
+                             fieldHasImages['ข้างหน้ารถ'] == true &&
+                             fieldHasImages['ข้างหลังรถ'] == true &&
+                             fieldHasImages['ข้างซ้ายรถ'] == true &&
+                             fieldHasImages['ข้างขวารถ'] == true &&
+                             fieldHasImages['ทะเบียนรถ'] == true &&
+                             fieldHasImages['ตัวถังรถ'] == true;
+                             
+    if (allFieldHaveImages) {
+      fieldHasImages['รูปภาพทั้งหมด'] = true;
+    }
 
     return fieldHasImages;
   }
