@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 // import 'package:kunchang_photo/pages/take_picture_page.dart';
 // import 'package:hexcolor/hexcolor.dart';
 import 'package:freestyle_speed_dial/freestyle_speed_dial.dart';
+import 'package:kunchang_photo/pages/display_image.dart';
 
-// This page is for Test speeddial widget
+/* This page is for Test speeddial widget and any other feature in the application */
+
 class BlankPage extends StatelessWidget {
   const BlankPage({super.key});
 
@@ -16,7 +18,7 @@ class BlankPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('this is for test'),
       ),
-      body: Center(child: Text('content goes here')),
+      body: const Center(child: Text('content goes here')),
     
       bottomNavigationBar: BottomAppBar(
         shape: const CircularNotchedRectangle(),
@@ -116,14 +118,14 @@ itemBuilder: (context, Widget item, i, animation) {
           ),
           FloatingActionButton(
             shape: const CircleBorder(),
-            onPressed: () {},
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const DisplayImagePage())),
             child: const Icon(Icons.camera_alt),
           ),
-          FloatingActionButton(
-            shape: const CircleBorder(),
-            onPressed: () {},
-            child: const Icon(Icons.qr_code_scanner),
-          ),
+          // FloatingActionButton(
+          //   shape: const CircleBorder(),
+          //   onPressed: () {},
+          //   child: const Icon(Icons.qr_code_scanner),
+          // ),
         ],
          
       ),

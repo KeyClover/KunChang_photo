@@ -250,6 +250,6 @@ class _TakePicturePageState extends State<TakePicturePage> {
               ),
             ),
           ),
-        ));
+        ),);
   }
 }

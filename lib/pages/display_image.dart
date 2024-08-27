@@ -1,10 +1,12 @@
 import 'dart:io';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:kunchang_photo/models/images_model.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:kunchang_photo/pages/take_picture_page.dart';
 import 'package:kunchang_photo/provider/images_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:sqflite/utils/utils.dart';
 
 class DisplayImagePage extends StatefulWidget {
   const DisplayImagePage({super.key});
@@ -36,7 +38,7 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
     'ตัวถังรถ': 'chassis',
   };
 
-   @override
+  @override
   void initState() {
     super.initState();
     // Recalculate when returning to the page
@@ -44,7 +46,6 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
       setState(() {});
     });
   }
-
 
   Future<List<ImagesModel>> fetchAllImagesFromDB(BuildContext context) async {
     final imageProvider = Provider.of<ImagesProvider>(context, listen: false);
@@ -86,7 +87,7 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
         );
       });
     }
-  }// has error
+  } // has error
 
   Map<String, bool> _checkFieldsWithImages(List<ImagesModel> allImages) {
     final Map<String, bool> fieldHasImages = {
@@ -130,12 +131,12 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
     // If every field has images, set 'รูปภาพทั้งหมด' to true // Will appear the check mark
 
     bool allFieldHaveImages = fieldHasImages['ใบฟิล'] == true &&
-                             fieldHasImages['ข้างหน้ารถ'] == true &&
-                             fieldHasImages['ข้างหลังรถ'] == true &&
-                             fieldHasImages['ข้างซ้ายรถ'] == true &&
-                             fieldHasImages['ข้างขวารถ'] == true &&
-                             fieldHasImages['ทะเบียนรถ'] == true &&
-                             fieldHasImages['ตัวถังรถ'] == true;
+        fieldHasImages['ข้างหน้ารถ'] == true &&
+        fieldHasImages['ข้างหลังรถ'] == true &&
+        fieldHasImages['ข้างซ้ายรถ'] == true &&
+        fieldHasImages['ข้างขวารถ'] == true &&
+        fieldHasImages['ทะเบียนรถ'] == true &&
+        fieldHasImages['ตัวถังรถ'] == true;
 
     if (allFieldHaveImages) {
       fieldHasImages['รูปภาพทั้งหมด'] = true;
@@ -204,30 +205,59 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
                   // Dropdown for filter options with icons
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: DropdownButton<String>(
-                      borderRadius: BorderRadius.circular(20),
-                      value: _selectedFilter,
-                      items: fieldHasImages.keys
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(value),
-                              if (fieldHasImages[value] == true)
-                                const Icon(Icons.done,
-                                    color:
-                                        Colors.green), // Display the done icon
-                            ],
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton2<String>(
+                        dropdownStyleData: DropdownStyleData(
+                          maxHeight: 400,
+                          width: 250,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: HexColor("#2e3150"),
                           ),
-                        );
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _selectedFilter = newValue!;
-                        });
-                      },
+                        ),
+                        buttonStyleData: ButtonStyleData(
+                          height: 45,
+                          width: 260,
+                          padding: const EdgeInsets.only(left: 20, right: 20),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: Colors.black),
+                            color: HexColor("#2e3150"),
+                          ),
+                          elevation: 2,
+                        ),
+                        iconStyleData: const IconStyleData(icon: Icon(Icons.arrow_drop_down)  ,iconSize: 40),
+                        
+                        isExpanded: true,
+                        value: _selectedFilter,
+                        items: fieldHasImages.keys
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(value,
+                                    style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white)),
+                                if (fieldHasImages[value] == true)
+                                  const Icon(
+                                    Icons.done,
+                                    color: Colors.green,
+                                    size: 30,
+                                  ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _selectedFilter = newValue!;
+                          });
+                        },
+                      ),
                     ),
                   ),
                   Expanded(
@@ -244,6 +274,7 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
           },
         ),
       ),
+      backgroundColor: HexColor("#e0e0e0"),
     );
   }
 
