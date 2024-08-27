@@ -57,7 +57,7 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
     final imageProvider = Provider.of<ImagesProvider>(context, listen: false);
     final String? columnName = labelToColumnMap[labelText];
 
-    final bool confirmDelete = await showDialog(
+    final bool? confirmDelete = await showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -76,7 +76,7 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
         );
       },
     );
-    if (confirmDelete) {
+    if (confirmDelete == true) {
       await imageProvider.deleteFromDatabaseDisplay(columnName!, imagePath);
       final updatedImages = await fetchAllImagesFromDB(context);
       final fieldHasImages = _checkFieldsWithImages(updatedImages);
@@ -86,7 +86,7 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
         );
       });
     }
-  }
+  }// has error
 
   Map<String, bool> _checkFieldsWithImages(List<ImagesModel> allImages) {
     final Map<String, bool> fieldHasImages = {
@@ -136,7 +136,7 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
                              fieldHasImages['ข้างขวารถ'] == true &&
                              fieldHasImages['ทะเบียนรถ'] == true &&
                              fieldHasImages['ตัวถังรถ'] == true;
-                             
+
     if (allFieldHaveImages) {
       fieldHasImages['รูปภาพทั้งหมด'] = true;
     }
