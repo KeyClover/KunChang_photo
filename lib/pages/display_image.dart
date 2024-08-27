@@ -127,10 +127,11 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
       }
     }
 
-    // If any field has images, set 'รูปภาพทั้งหมด' to true
-    if (fieldHasImages.containsValue(true)) {
-      fieldHasImages['รูปภาพทั้งหมด'] = true;
-    }
+    // If any field has images, set 'รูปภาพทั้งหมด' to true // Will appear the check mark
+
+    // if (fieldHasImages.containsValue(true)) {
+    //   fieldHasImages['รูปภาพทั้งหมด'] = true;
+    // }
 
     return fieldHasImages;
   }
