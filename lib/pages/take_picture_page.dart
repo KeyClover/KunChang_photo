@@ -269,8 +269,8 @@ class _TakePicturePageState extends State<TakePicturePage> {
                     child: const Text(
                       'บันทึก',
                       style: TextStyle(
-                        fontSize:
-                            20.0, // Adjust this value to increase or decrease the text size
+                        fontSize: 20.0, // Adjust this value to increase or decrease the text size
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),

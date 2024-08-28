@@ -6,7 +6,6 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:kunchang_photo/pages/take_picture_page.dart';
 import 'package:kunchang_photo/provider/images_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:sqflite/utils/utils.dart';
 
 class DisplayImagePage extends StatefulWidget {
   const DisplayImagePage({super.key});
@@ -79,8 +78,8 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
     );
     if (confirmDelete == true) {
       await imageProvider.deleteFromDatabaseDisplay(columnName!, imagePath);
-      final updatedImages = await fetchAllImagesFromDB(context);
-      final fieldHasImages = _checkFieldsWithImages(updatedImages);
+      //final updatedImages = await fetchAllImagesFromDB(context);
+      //final fieldHasImages = _checkFieldsWithImages(updatedImages);
       setState(() {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('ลบรูปสำเร็จ')),
@@ -185,7 +184,9 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
         backgroundColor: HexColor("#2e3150"),
       ),
       body: Container(
-        padding: const EdgeInsets.all(20),
+        constraints: const BoxConstraints.expand(),
+        padding:
+            const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 0.0),
         child: FutureBuilder<List<ImagesModel>>(
           future: fetchAllImagesFromDB(context),
           builder: (context, snapshot) {
@@ -202,10 +203,9 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                
                   Padding(
-                    padding: const EdgeInsets.only(left:8.0, top: 8.0, bottom: 1.0),
-
+                    padding:
+                        const EdgeInsets.only(left: 8.0, top: 8.0, bottom: 1.0),
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton2<String>(
                         dropdownStyleData: DropdownStyleData(
@@ -227,13 +227,12 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
                           ),
                           elevation: 2,
                         ),
-                        
                         iconStyleData: const IconStyleData(
-                            icon: Icon(Icons.arrow_drop_down, ),
-                            iconSize: 35,
-                            iconEnabledColor: Colors.white
+                            icon: Icon(
+                              Icons.arrow_drop_down,
                             ),
-
+                            iconSize: 35,
+                            iconEnabledColor: Colors.white),
                         isExpanded: true,
                         value: _selectedFilter,
                         items: fieldHasImages.keys
@@ -248,7 +247,6 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.white)),
-                                        
                                 if (fieldHasImages[value] == true)
                                   const Icon(
                                     Icons.done,
@@ -269,7 +267,8 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
                   ),
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.all(20.0),
+                      padding:
+                          const EdgeInsets.only(top: 20, left: 20, right: 20),
                       child: ListView(
                         children: _buildFilteredImages(allImages),
                       ),
