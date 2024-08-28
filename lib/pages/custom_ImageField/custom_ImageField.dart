@@ -27,9 +27,12 @@ class CustomImageField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          labelText,
-          style: const TextStyle(fontSize: 20),
+        Padding(
+          padding: const EdgeInsets.only(left: 20),
+          child: Text(
+            labelText,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, ),
+          ),
         ),
         const SizedBox(height: 10),
         Container(

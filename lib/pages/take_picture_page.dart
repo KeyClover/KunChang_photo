@@ -8,6 +8,7 @@ import 'package:kunchang_photo/provider/images_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:kunchang_photo/pages/custom_ImageField/custom_ImageField.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 
 class TakePicturePage extends StatefulWidget {
   const TakePicturePage({super.key});
@@ -159,47 +160,69 @@ class _TakePicturePageState extends State<TakePicturePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          backgroundColor: HexColor("#2e3150"),
-          title: Stack(
-            children: [
-              Align(
-                alignment: Alignment.centerLeft,
-                child: IconButton(
-                  onPressed: () {
-                    saveImage(context);
-                  },
-                  icon: const Icon(
-                    Icons.arrow_back_ios_new,
-                    color: Colors.white,
-                  ),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: HexColor("#2e3150"),
+        title: Stack(
+          children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: IconButton(
+                onPressed: () {
+                  saveImage(context);
+                },
+                icon: const Icon(
+                  Icons.arrow_back_ios_new,
+                  color: Colors.white,
                 ),
               ),
-              const Align(
-                alignment: Alignment.center,
-                child: Text(
-                  'รูปภาพ',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 26,
-                  ),
-                  textAlign: TextAlign.center,
+            ),
+            const Align(
+              alignment: Alignment.center,
+              child: Text(
+                'รูปภาพ',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 26,
                 ),
+                textAlign: TextAlign.center,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-        body: Container(
-          padding: const EdgeInsets.all(20),
-          child: Form(
-            key: _formKey,
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  DropdownButton<String>(
-                    borderRadius: BorderRadius.circular(20),
+      ),
+      body: Container(
+        padding: const EdgeInsets.all(20),
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                DropdownButtonHideUnderline(
+                  child: DropdownButton2<String>(
+                    dropdownStyleData: DropdownStyleData(
+                      maxHeight: 400,
+                      width: 240,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: HexColor("#2e3150"),
+                      ),
+                    ),
+                    buttonStyleData: ButtonStyleData(
+                      height: 45,
+                      width: 240,
+                      padding: const EdgeInsets.only(left: 20, right: 10),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: Colors.black),
+                          color: HexColor("#2e3150")),
+                    ),
+                    iconStyleData: const IconStyleData(
+                      icon: Icon(Icons.arrow_drop_down),
+                      iconSize: 35,
+                      iconEnabledColor: Colors.white,
+                    ),
                     value: _selectedField,
                     hint: const Text('Select Image Field'),
                     onChanged: (String? newValue) {
@@ -210,46 +233,54 @@ class _TakePicturePageState extends State<TakePicturePage> {
                     items: _fieldLabels.entries.map((entry) {
                       return DropdownMenuItem<String>(
                         value: entry.key,
-                        child: Text(entry.value),
+                        child: Text(entry.value,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            )),
                       );
                     }).toList(),
                   ),
-                  const SizedBox(height: 20),
-                  CustomImageField(
-                    field: _selectedField!,
-                    labelText: _fieldLabels[_selectedField!]!,
-                    getImage: getImage,
-                    deleteImage: deleteImage,
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          saveImage(context);
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        alignment: Alignment.bottomCenter,
-                        minimumSize: const Size(100, 50),
-                        padding: const EdgeInsets.all(10),
-                      ),
-                      child: const Text(
-                        'บันทึก',
-                        style: TextStyle(
-                          fontSize:
-                              20.0, // Adjust this value to increase or decrease the text size
-                        ),
+                ),
+                const SizedBox(height: 20),
+                CustomImageField(
+                  field: _selectedField!,
+                  labelText: _fieldLabels[_selectedField!]!,
+                  getImage: getImage,
+                  deleteImage: deleteImage,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        saveImage(context);
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      alignment: Alignment.bottomCenter,
+                      minimumSize: const Size(100, 50),
+                      padding: const EdgeInsets.all(10),
+                    ),
+                    child: const Text(
+                      'บันทึก',
+                      style: TextStyle(
+                        fontSize:
+                            20.0, // Adjust this value to increase or decrease the text size
                       ),
                     ),
-                  )
-                ],
-              ),
+                  ),
+                )
+              ],
             ),
           ),
-        ),);
+        ),
+      ),
+      backgroundColor: HexColor("#e0e0e0"),
+    );
   }
 }

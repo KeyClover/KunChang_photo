@@ -202,14 +202,15 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Dropdown for filter options with icons
+                
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.only(left:8.0, top: 8.0, bottom: 1.0),
+
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton2<String>(
                         dropdownStyleData: DropdownStyleData(
                           maxHeight: 400,
-                          width: 250,
+                          width: 240,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
                             color: HexColor("#2e3150"),
@@ -217,8 +218,8 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
                         ),
                         buttonStyleData: ButtonStyleData(
                           height: 45,
-                          width: 260,
-                          padding: const EdgeInsets.only(left: 20, right: 20),
+                          width: 240,
+                          padding: const EdgeInsets.only(left: 20, right: 10),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(color: Colors.black),
@@ -226,8 +227,13 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
                           ),
                           elevation: 2,
                         ),
-                        iconStyleData: const IconStyleData(icon: Icon(Icons.arrow_drop_down)  ,iconSize: 40),
                         
+                        iconStyleData: const IconStyleData(
+                            icon: Icon(Icons.arrow_drop_down, ),
+                            iconSize: 35,
+                            iconEnabledColor: Colors.white
+                            ),
+
                         isExpanded: true,
                         value: _selectedFilter,
                         items: fieldHasImages.keys
@@ -242,6 +248,7 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.white)),
+                                        
                                 if (fieldHasImages[value] == true)
                                   const Icon(
                                     Icons.done,
@@ -351,13 +358,14 @@ class ImageDisplayField extends StatelessWidget {
           children: [
             Text(
               labelText,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             IconButton(
               onPressed: onDelete,
               icon: const Icon(
                 Icons.close_rounded,
                 color: Colors.red,
+                size: 25,
               ),
             ),
           ],
