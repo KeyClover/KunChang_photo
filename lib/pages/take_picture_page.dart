@@ -203,7 +203,7 @@ class _TakePicturePageState extends State<TakePicturePage> {
                   child: DropdownButton2<String>(
                     dropdownStyleData: DropdownStyleData(
                       maxHeight: 400,
-                      width: 240,
+                      width: 373,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         color: HexColor("#2e3150"),
@@ -211,7 +211,7 @@ class _TakePicturePageState extends State<TakePicturePage> {
                     ),
                     buttonStyleData: ButtonStyleData(
                       height: 45,
-                      width: 240,
+                      width: 400,
                       padding: const EdgeInsets.only(left: 20, right: 10),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
