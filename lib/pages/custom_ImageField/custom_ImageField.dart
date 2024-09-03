@@ -56,7 +56,7 @@ class CustomImageField extends StatelessWidget {
                             file,
                             height: 550,
                             width: double.infinity, // Adjust this if necessary
-                            fit: BoxFit.cover,
+                            fit: BoxFit.fill,
                           ),
                         ),
                         Positioned(
