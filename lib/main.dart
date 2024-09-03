@@ -13,10 +13,11 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+  
 
   // This widget is the root of your application.
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {  
     return MultiProvider(
         providers: <SingleChildWidget>[
           ChangeNotifierProvider(
@@ -30,7 +31,8 @@ class MyApp extends StatelessWidget {
             visualDensity: VisualDensity.adaptivePlatformDensity,
           ),
           home: const MyHomePage(title: 'KunChang'),
-        ));
+        ),
+        );
   }
 }
 
@@ -43,14 +45,9 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-
-
 class _MyHomePageState extends State<MyHomePage> {
   @override
   
-  
-
-
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
