@@ -1,7 +1,11 @@
+import 'dart:io';
+
+import 'package:kunchang_photo/pages/display_image.dart';
+import 'package:photo_manager/photo_manager.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:kunchang_photo/models/images_model.dart';
 import 'package:path/path.dart';
-
+import 'package:gallery_saver/gallery_saver.dart';
 class ImagesDB {
   static final ImagesDB _imagesDB = ImagesDB._internal();
   factory ImagesDB() => _imagesDB;
@@ -54,10 +58,35 @@ class ImagesDB {
   }
 
   Future<int> insertImage(ImagesModel images) async {
-    Database db = await database;
-    // print('Inserting image: ${images.toMap()}'); // if not working delete this
-    return await db.insert(imagesTable, images.toMap());
+     Database db = await database;
+     int result = await db.insert(imagesTable, images.toMap());
+
+    // Save the images to the gallery
+    await _saveImagesToGallery(images);
+
+    return result;
   }
+
+  Future<void> _saveImagesToGallery(ImagesModel images) async {
+    // A list to hold all the image paths
+    List<String?> allImagePaths = [
+      ...?images.fieldcardImage,
+      ...?images.frontImage,
+      ...?images.backImage,
+      ...?images.leftSide,
+      ...?images.rightSide,
+      ...?images.carRegistrationPlate,
+      ...?images.chassis,
+    ];
+
+    // Save each image to the gallery
+    for (String? imagePath in allImagePaths) {
+      if (imagePath != null && imagePath.isNotEmpty) {
+        await GallerySaver.saveImage(imagePath);
+      }
+    }
+  }
+  
 
   Future<List<ImagesModel>> getImageDB() async {
     
@@ -70,9 +99,40 @@ class ImagesDB {
       return ImagesModel.fromMap(imagesMapList[index]);
     });
   }
+  
+  Future<List<String>> fetchImagesFromGallery() async {
+    final PermissionState permissionState = await PhotoManager.requestPermissionExtend();
+    if (permissionState.isAuth) {
+      // Fetch images from the gallery
+      final List<AssetPathEntity> albums = await PhotoManager.getAssetPathList(
+        type: RequestType.image,
+        hasAll: true,
+      );
+
+      final List<AssetEntity> images = await albums[0].getAssetListPaged( page: 0, size: 100);
+
+      // Retrieve file paths
+      List<String> imagePaths = [];
+      for (var image in images) {
+        final File? file = await image.file;
+        if (file != null) {
+          imagePaths.add(file.path);
+        }
+      }
+      return imagePaths;
+    } else {
+      // Handle permission denial
+      return [];
+    }
+  }
+  
+
 
   Future<int> deleteImage(String field, String filePath) async {
     Database db = await database;
+
+    // Delete the image from the gallery
+    //await File(filePath).delete();
 
     int result = await db.delete(
       imagesTable,

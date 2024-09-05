@@ -46,7 +46,10 @@ dependencies:
   freestyle_speed_dial: ^1.0.1+2
   spincircle_bottom_bar: ^2.0.0
   dropdown_button2: ^2.3.9
-   
+  gallery_saver: ^2.3.2
+  permission_handler: ^11.3.1
+  photo_manager: ^3.3.0
+  flutter_image_compress: ^2.3.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

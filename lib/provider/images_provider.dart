@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:kunchang_photo/models/images_model.dart';
 import 'package:kunchang_photo/database/images_db_sqlite.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 class ImagesProvider with ChangeNotifier {
   List<ImagesModel> _images = [];
@@ -29,23 +30,39 @@ class ImagesProvider with ChangeNotifier {
   }
 
   void addSelectedImageFile(String field, File imageFile) async {
-     if (_selectedImageFiles[field] == null) {
-        _selectedImageFiles[field] = [];
-      }
-      _selectedImageFiles[field]!.add(imageFile);
-      notifyListeners();
+
+    final compressImage = await FlutterImageCompress.compressWithFile(
+      imageFile.absolute.path,
+      minWidth: 400,
+      minHeight: 600,
+      quality: 30,
+    );
+
+     if (compressImage != null) {
+      final compressFile = File('${imageFile.path}_compressed.jpg');
+      await compressFile.writeAsBytes(compressImage);
+
+  if (_selectedImageFiles[field] == null) {
+     _selectedImageFiles[field] = [];
+   }
+   _selectedImageFiles[field]!.add(imageFile);
+   notifyListeners();
+}
   }
 
-  Future<void> deleteFromDatabaseDisplay(String columnName, String filePath) async {
-    
-    // Delete the image from the database
-    await _imagesDB.deleteImage(columnName, filePath);
+ Future<void> deleteFromDatabaseDisplay(String columnName, String filePath) async {
+  // Delete the image from the gallery
+  await File(filePath).delete();
 
-    // Remove the image from the in-memory list
-    _selectedImageFiles[columnName]?.removeWhere((file) => file.path == filePath);
+  // Delete the image from the database
+  await _imagesDB.deleteImage(columnName, filePath);
 
-    notifyListeners(); // Notify listeners to update the UI
-  }
+  // Remove the image from the in-memory list
+  _selectedImageFiles[columnName]?.removeWhere((file) => file.path == filePath);
+
+  notifyListeners(); // Notify listeners to update the UI
+}
+
 
   Future<void> deleteFromDatabaseTakepicture(String field, int index) async {
     final imageFile = _selectedImageFiles[field]?[index];
