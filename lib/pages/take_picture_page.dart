@@ -1,14 +1,10 @@
-import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:gallery_saver/gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kunchang_photo/models/images_model.dart';
 // import 'package:kunchang_photo/pages/blank_page.dart';
 import 'package:kunchang_photo/pages/display_image.dart';
 import 'package:kunchang_photo/provider/images_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:kunchang_photo/pages/custom_ImageField/custom_ImageField.dart';
@@ -135,8 +131,6 @@ class _TakePicturePageState extends State<TakePicturePage> {
     // Save images to the database
     await imageProvider.addNewImages(images);
 
-    await _saveImagesToGallery(images);
-
     // Clear the image field after saving
     imageProvider.clearSelectedImageFile(_selectedField!);
 
@@ -152,47 +146,6 @@ class _TakePicturePageState extends State<TakePicturePage> {
         builder: (context) => const DisplayImagePage(),
       ),
     );
-  }
-
-  Future<void> _saveImagesToGallery(ImagesModel images) async {
-    List<String?> allImagePaths = [
-      ...?images.fieldcardImage,
-      ...?images.frontImage,
-      ...?images.backImage,
-      ...?images.leftSide,
-      ...?images.rightSide,
-      ...?images.carRegistrationPlate,
-      ...?images.chassis,
-    ];
-
-    for (String? imagePath in allImagePaths) {
-      if (imagePath != null && imagePath.isNotEmpty) {
-        final compressedImagePath = await _compressedImage(imagePath);
-        await GallerySaver.saveImage(compressedImagePath);
-      }
-    }
-  }
-
-  Future<String> _compressedImage(String imagePath) async {
-    final compressFile = await FlutterImageCompress.compressAndGetFile(
-      imagePath,
-      imagePath.replaceAll(".jpg", "_compressed.jpg"),
-      quality: 30,
-    );
-    return compressFile?.path ?? imagePath;
-  }
-
-  Future<void> _requestStoragePermission() async {
-    if (await Permission.storage.request().isGranted) {
-      // Permission granted, proceed with the image saving.
-    } else {
-      // Handle permission denied
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('กรุณาอนุญาตการเข้าถึงพื้นที่จัดเก็บข้อมูล'),
-        ),
-      );
-    }
   }
 
   List<String>? _filterEmpty(List<File>? files) {
@@ -316,8 +269,7 @@ class _TakePicturePageState extends State<TakePicturePage> {
                     child: const Text(
                       'บันทึก',
                       style: TextStyle(
-                        fontSize:
-                            20.0, // Adjust this value to increase or decrease the text size
+                        fontSize: 20.0, // Adjust this value to increase or decrease the text size
                         fontWeight: FontWeight.bold,
                       ),
                     ),
