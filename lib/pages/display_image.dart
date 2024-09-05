@@ -389,7 +389,7 @@ class ImageDisplayField extends StatelessWidget {
               aspectRatio:9 / 14,
               child: Image.file(
                 File(imagePath),
-                fit: BoxFit.cover,
+                fit: BoxFit.fill,
               ),
             ),
           ),
