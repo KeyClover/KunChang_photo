@@ -59,7 +59,7 @@ class ImagesDB {
 
   Future<int> insertImage(ImagesModel images) async {
      Database db = await database;
-     int result = await db.insert(imagesTable, images.toMap());
+     int   result = await db.insert(imagesTable, images.toMap());
 
     // Save the images to the gallery
     await _saveImagesToGallery(images);
