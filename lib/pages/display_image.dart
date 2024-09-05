@@ -184,8 +184,9 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
         backgroundColor: HexColor("#2e3150"),
       ),
       body: Container(
+        constraints: const BoxConstraints.expand(),
         padding:
-            const EdgeInsets.only(top: 20, left: 20, right: 20,),
+            const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 0.0),
         child: FutureBuilder<List<ImagesModel>>(
           future: fetchAllImagesFromDB(context),
           builder: (context, snapshot) {
@@ -204,28 +205,27 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
                 children: [
                   Padding(
                     padding:
-                        const EdgeInsets.symmetric(vertical: 8.0),
+                        const EdgeInsets.only(left: 8.0, top: 8.0, bottom: 1.0),
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton2<String>(
                         dropdownStyleData: DropdownStyleData(
                           maxHeight: 400,
-                          width: 373,
+                          width: 240,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
                             color: HexColor("#2e3150"),
                           ),
-                          
                         ),
                         buttonStyleData: ButtonStyleData(
                           height: 45,
-                          width: 400,
+                          width: 240,
                           padding: const EdgeInsets.only(left: 20, right: 10),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(color: Colors.black),
                             color: HexColor("#2e3150"),
                           ),
-                          
+                          elevation: 2,
                         ),
                         iconStyleData: const IconStyleData(
                             icon: Icon(
@@ -233,8 +233,7 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
                             ),
                             iconSize: 35,
                             iconEnabledColor: Colors.white),
-                           
-                        
+                        isExpanded: true,
                         value: _selectedFilter,
                         items: fieldHasImages.keys
                             .map<DropdownMenuItem<String>>((String value) {
@@ -269,7 +268,7 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
                   Expanded(
                     child: Padding(
                       padding:
-                          const EdgeInsets.only(top: 5, left: 20  , right: 20),
+                          const EdgeInsets.only(top: 20, left: 20, right: 20),
                       child: ListView(
                         children: _buildFilteredImages(allImages),
                       ),
@@ -280,7 +279,6 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
             }
           },
         ),
-        
       ),
       backgroundColor: HexColor("#e0e0e0"),
     );
