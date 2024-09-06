@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 // import 'package:hexcolor/hexcolor.dart';
 import 'package:freestyle_speed_dial/freestyle_speed_dial.dart';
 import 'package:kunchang_photo/pages/display_image.dart';
+import 'package:kunchang_photo/pages/take_picture_page.dart';
 
 /* This page is for Test speeddial widget and any other feature in the application */
 
@@ -118,7 +119,7 @@ itemBuilder: (context, Widget item, i, animation) {
           ),
           FloatingActionButton(
             shape: const CircleBorder(),
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const DisplayImagePage())),
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const TakePicturePage())),
             child: const Icon(Icons.camera_alt),
           ),
           // FloatingActionButton(
