@@ -17,31 +17,12 @@ class ImagesProvider with ChangeNotifier {
   }
 
   Future<void> addNewImages(ImagesModel images) async {
-    final updatedImages = ImagesModel(
-      id: images.id,
-      fieldcardImage: await _compressImages(images.fieldcardImage),
-    frontImage: await _compressImages(images.frontImage),
-    backImage: await _compressImages(images.backImage),
-    leftSide: await _compressImages(images.leftSide),
-    rightSide: await _compressImages(images.rightSide),
-    carRegistrationPlate: await _compressImages(images.carRegistrationPlate),
-    chassis: await _compressImages(images.chassis),
-      
-    );
+    
     await _imagesDB.insertImage(images);
     await fetchImages();
     notifyListeners();
   }
 
-  Future<List<String>> _compressImages(List<String>? imagePaths) async{
-    if(imagePaths == null) return [];
-    final compressedPaths = <String>[];
-    for(final path in imagePaths){
-      final compressedPath = await _compressedImage(path);
-      compressedPaths.add(compressedPath);
-    }
-    return compressedPaths;
-  }
 
    Future<String> _compressedImage(String imagePath) async {
     final compressFile = await FlutterImageCompress.compressAndGetFile(
