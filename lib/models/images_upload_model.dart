@@ -22,14 +22,14 @@ class FileUploadPost {
     });
 
     factory FileUploadPost.fromJson(Map<String, dynamic> json) => FileUploadPost(
-        docId: json["docID"],
+        docId: json["docID"] is int ? json["docID"] : int.parse(json["docID"]),
         imageType: json["imageType"],
         createBy: json["createBy"],
         files: json["files"] ?? [],
     );
 
     Map<String, dynamic> toJson() => {
-        "docID": docId,
+        "docID": docId, // Convert to string to ensure it's handled correctly by the API
         "imageType": imageType,
         "createBy": createBy,
         "files": files,

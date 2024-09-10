@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kunchang_photo/models/images_model.dart';
@@ -113,6 +114,12 @@ class _TakePicturePageState extends State<TakePicturePage> {
   //   ].any((imageList) => imageList != null && imageList.isNotEmpty);
   // }
 
+  int generateUniqueDocId() {
+    final timestamp = DateTime.now().millisecondsSinceEpoch % 1000000000;
+    final random = Random().nextInt(1000000); // Increased range for more uniqueness
+    return (timestamp + random) % 2147483647; // This will create a 64-bit integer
+  }
+
   void saveImage(BuildContext context) async {
     final imageProvider = Provider.of<ImagesProvider>(context, listen: false);
 
@@ -123,9 +130,12 @@ class _TakePicturePageState extends State<TakePicturePage> {
       return;
     }
 
+    // Generate a unique docId
+    final uniqueDocId = generateUniqueDocId();
+
     // Create FileUploadPost model
     final fileUploadPost = FileUploadPost(
-      docId: 1000, // Replace with actual docId if available
+      docId: uniqueDocId,
       imageType: _selectedField ?? '', // Ensure imageType is not null
       createBy: 1000, // Replace with actual user ID if available
       files: imageProvider.selectedImageFiles[_selectedField!]!.map((file) => file.path).toList(),
@@ -139,7 +149,7 @@ class _TakePicturePageState extends State<TakePicturePage> {
       imageProvider.clearSelectedImageFile(_selectedField!);
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('อัปโหลดสำเร็จ')),
+        SnackBar(content: Text('อัปโหลดสำเร็จ (DocID: $uniqueDocId)')),
       );
 
       // Navigate to DisplayImagePage
