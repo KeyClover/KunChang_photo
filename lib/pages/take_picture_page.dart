@@ -116,16 +116,24 @@ class _TakePicturePageState extends State<TakePicturePage> {
 
   int generateUniqueDocId() {
     final timestamp = DateTime.now().millisecondsSinceEpoch % 1000000000;
-    final random = Random().nextInt(1000000); // Increased range for more uniqueness
-    return (timestamp + random) % 2147483647; // This will create a 64-bit integer
+    final random =
+        Random().nextInt(1000000); // Increased range for more uniqueness
+    return (timestamp + random) %
+        2147483647; // This will create a 64-bit integer
   }
 
   void saveImage(BuildContext context) async {
     final imageProvider = Provider.of<ImagesProvider>(context, listen: false);
 
-    if (_selectedField == null || imageProvider.selectedImageFiles[_selectedField!] == null || imageProvider.selectedImageFiles[_selectedField!]!.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('กรุณาเลือกรูปภาพก่อนบันทึก')),
+    if (_selectedField == null ||
+        imageProvider.selectedImageFiles[_selectedField!] == null ||
+        imageProvider.selectedImageFiles[_selectedField!]!.isEmpty) {
+      // If no image is selected, navigate directly to DisplayImagePage
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const DisplayImagePage(),
+        ),
       );
       return;
     }
@@ -136,9 +144,11 @@ class _TakePicturePageState extends State<TakePicturePage> {
     // Create FileUploadPost model
     final fileUploadPost = FileUploadPost(
       docId: uniqueDocId,
-      imageType: _selectedField ?? '', // Ensure imageType is not null
+      imageType: _selectedField ?? '',
       createBy: 1000, // Replace with actual user ID if available
-      files: imageProvider.selectedImageFiles[_selectedField!]!.map((file) => file.path).toList(),
+      files: imageProvider.selectedImageFiles[_selectedField!]!
+          .map((file) => file.path)
+          .toList(),
     );
 
     try {
@@ -287,7 +297,8 @@ class _TakePicturePageState extends State<TakePicturePage> {
                     child: const Text(
                       'บันทึก',
                       style: TextStyle(
-                        fontSize: 20.0, // Adjust this value to increase or decrease the text size
+                        fontSize:
+                            20.0, // Adjust this value to increase or decrease the text size
                         fontWeight: FontWeight.bold,
                       ),
                     ),
