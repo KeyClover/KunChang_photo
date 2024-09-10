@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kunchang_photo/models/images_model.dart';
-// import 'package:kunchang_photo/pages/blank_page.dart';
+import 'package:kunchang_photo/models/images_upload_model.dart';
 import 'package:kunchang_photo/pages/display_image.dart';
 import 'package:kunchang_photo/provider/images_provider.dart';
 import 'package:provider/provider.dart';
@@ -20,16 +20,16 @@ class TakePicturePage extends StatefulWidget {
 class _TakePicturePageState extends State<TakePicturePage> {
   final _formKey = GlobalKey<FormState>();
 
-  String? _selectedField = 'fieldcardImage';
+  String? _selectedField = 'FieldcardImage';
 
   final Map<String, String> _fieldLabels = {
-    'fieldcardImage': 'ใบฟิล',
-    'frontImage': 'ข้างหน้ารถ',
-    'backImage': 'ข้างหลังรถ',
-    'leftSide': 'ข้างซ้ายรถ',
-    'rightSide': 'ข้างขวารถ',
-    'carRegistrationPlate': 'ทะเบียนรถ',
-    'chassis': 'ตัวถังรถ',
+    'FieldcardImage': 'ใบฟิล',
+    'FrontImage': 'ข้างหน้ารถ',
+    'BackImage': 'ข้างหลังรถ',
+    'LeftSide': 'ข้างซ้ายรถ',
+    'RightSide': 'ข้างขวารถ',
+    'CarRegistrationPlate': 'ทะเบียนรถ',
+    'Chassis': 'ตัวถังรถ',
   };
 
   void getImage(BuildContext context, String field) async {
@@ -101,51 +101,59 @@ class _TakePicturePageState extends State<TakePicturePage> {
     }
   } // This is for deleting the images
 
-  bool hasAnyImages(ImagesModel images) {
-    return [
-      images.fieldcardImage,
-      images.frontImage,
-      images.backImage,
-      images.leftSide,
-      images.rightSide,
-      images.carRegistrationPlate,
-      images.chassis,
-    ].any((imageList) => imageList != null && imageList.isNotEmpty);
-  }
+  // bool hasAnyImages(ImagesModel images) {
+  //   return [
+  //     images.fieldcardImage,
+  //     images.frontImage,
+  //     images.backImage,
+  //     images.leftSide,
+  //     images.rightSide,
+  //     images.carRegistrationPlate,
+  //     images.chassis,
+  //   ].any((imageList) => imageList != null && imageList.isNotEmpty);
+  // }
 
   void saveImage(BuildContext context) async {
     final imageProvider = Provider.of<ImagesProvider>(context, listen: false);
 
-    final images = ImagesModel(
-      fieldcardImage:
-          _filterEmpty(imageProvider.selectedImageFiles['fieldcardImage']),
-      frontImage: _filterEmpty(imageProvider.selectedImageFiles['frontImage']),
-      backImage: _filterEmpty(imageProvider.selectedImageFiles['backImage']),
-      leftSide: _filterEmpty(imageProvider.selectedImageFiles['leftSide']),
-      rightSide: _filterEmpty(imageProvider.selectedImageFiles['rightSide']),
-      carRegistrationPlate: _filterEmpty(
-          imageProvider.selectedImageFiles['carRegistrationPlate']),
-      chassis: _filterEmpty(imageProvider.selectedImageFiles['chassis']),
-    );
-
-    // Save images to the database
-    await imageProvider.addNewImages(images);
-
-    // Clear the image field after saving
-    imageProvider.clearSelectedImageFile(_selectedField!);
-
-    if (hasAnyImages(images)) {
+    if (_selectedField == null || imageProvider.selectedImageFiles[_selectedField!] == null || imageProvider.selectedImageFiles[_selectedField!]!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('บันทึกสำเร็จ')),
+        const SnackBar(content: Text('กรุณาเลือกรูปภาพก่อนบันทึก')),
       );
+      return;
     }
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const DisplayImagePage(),
-      ),
+    // Create FileUploadPost model
+    final fileUploadPost = FileUploadPost(
+      docId: 1000, // Replace with actual docId if available
+      imageType: _selectedField ?? '', // Ensure imageType is not null
+      createBy: 1000, // Replace with actual user ID if available
+      files: imageProvider.selectedImageFiles[_selectedField!]!.map((file) => file.path).toList(),
     );
+
+    try {
+      // Upload images to the API
+      await imageProvider.uploadImagesToAPI(fileUploadPost);
+
+      // Clear the image field after successful upload
+      imageProvider.clearSelectedImageFile(_selectedField!);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('อัปโหลดสำเร็จ')),
+      );
+
+      // Navigate to DisplayImagePage
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const DisplayImagePage(),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('เกิดข้อผิดพลาดในการอัปโหลด: $e')),
+      );
+    }
   }
 
   List<String>? _filterEmpty(List<File>? files) {

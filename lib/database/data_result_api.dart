@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:kunchang_photo/models/images_upload_model.dart';
 
 class RestDataSource {
   String baseAPI = 'http://203.150.53.11:9001/CSCPlusAPIdev/api/';
@@ -19,42 +20,43 @@ class RestDataSource {
     return '${baseAPI}FileUpload/PostMultiFiles';
   }
 
-  Future<void> uploadImageToAPI({
-    required int docId,
-    required String imageType,
-    required int createBy,
-    required File imageFile,
-  }) async {
-    final String apiUrl = PostMultiFiles();
+  Future<void> uploadImageToAPI(FileUploadPost fileUploadPost) async {
+    final String baseUrl = PostMultiFiles();
+    final Uri apiUrl = Uri.parse('$baseUrl?docId=${fileUploadPost.docId}&imageType=${fileUploadPost.imageType}&createBy=${fileUploadPost.createBy}');
 
-    var request = http.MultipartRequest('POST', Uri.parse(apiUrl));
-    request.fields['docid'] = docId.toString();
-    request.fields['imageType'] = imageType;
-    request.fields['createBy'] = createBy.toString();
+    var request = http.MultipartRequest('POST', apiUrl);
     
-    var file = await http.MultipartFile.fromPath('file', imageFile.path);
-    request.files.add(file);
+    if (fileUploadPost.files != null) {
+      for (var filePath in fileUploadPost.files!) {
+        var file = await http.MultipartFile.fromPath('files', filePath);
+        request.files.add(file);
+      }
+    }
 
-    var response = await request.send();
+    try {
+      var response = await request.send();
+      final responseBody = await response.stream.bytesToString();
 
-    if (response.statusCode == 200) {
-      print('Image uploaded successfully');
-    } else {
-      print('Failed to upload image: ${await response.stream.bytesToString()}');
-      throw Exception('Failed to upload image');
+      if (response.statusCode == 200) {
+        print('Images uploaded successfully');
+        print('Response: $responseBody');
+      } else {
+        print('Failed to upload images. Status code: ${response.statusCode}');
+        print('Response: $responseBody');
+        throw Exception('Failed to upload images: ${response.statusCode}\nResponse: $responseBody');
+      }
+    } catch (e) {
+      print('Error during image upload: $e');
+      throw Exception('Error during image upload: $e');
     }
   }
 
-  Future<List<Image>> fetchImagesFromAPI(int docId) async {
+  Future<List<Map<String, dynamic>>> fetchImagesFromAPI(int docId) async {
     final response = await http.get(Uri.parse(GetListFile(docId: docId)));
 
     if (response.statusCode == 200) {
       final List<dynamic> imageList = jsonDecode(response.body);
-      return imageList.map((imageData) {
-        final String base64Image = imageData['file']; // Adjust key based on API response
-        final Uint8List bytes = base64Decode(base64Image);
-        return Image.memory(bytes);
-      }).toList();
+      return imageList.cast<Map<String, dynamic>>();
     } else {
       throw Exception('Failed to load images');
     }

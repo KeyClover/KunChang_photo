@@ -9,29 +9,29 @@ FileUploadPost fileUploadPostFromJson(String str) => FileUploadPost.fromJson(jso
 String fileUploadPostToJson(FileUploadPost data) => json.encode(data.toJson());
 
 class FileUploadPost {
-    int? docId;
-    String? imageType;
-    int? createBy;
-    List<dynamic>? files;
+    final int docId;
+    final String imageType;
+    final int createBy;
+    final List<dynamic> files;
 
     FileUploadPost({
-        this.docId,
-        this.imageType,
-        this.createBy,
-        this.files,
+        required this.docId,
+        required this.imageType,
+        required this.createBy,
+        required this.files,
     });
 
     factory FileUploadPost.fromJson(Map<String, dynamic> json) => FileUploadPost(
         docId: json["docID"],
         imageType: json["imageType"],
         createBy: json["createBy"],
-        files: json["files"] == null ? [] : List<dynamic>.from(json["files"]!.map((x) => x)),
+        files: json["files"] ?? [],
     );
 
     Map<String, dynamic> toJson() => {
         "docID": docId,
         "imageType": imageType,
         "createBy": createBy,
-        "files": files == null ? [] : List<dynamic>.from(files!.map((x) => x)),
+        "files": files,
     };
 }

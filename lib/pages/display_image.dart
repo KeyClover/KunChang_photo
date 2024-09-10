@@ -48,8 +48,8 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
 
   Future<List<ImagesModel>> fetchAllImagesFromDB(BuildContext context) async {
     final imageProvider = Provider.of<ImagesProvider>(context, listen: false);
-    await imageProvider.fetchImages(); // Fetch images from the database
-    return imageProvider.images; // Fetch last saved images
+    await imageProvider.fetchImagesFromAPI(); // Fetch images from the API
+    return imageProvider.images; // Return fetched images
   }
 
   void _deleteImage(
@@ -101,28 +101,28 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
     };
 
     for (final imagesModel in allImages) {
-      if (imagesModel.fieldcardImage != null &&
-          imagesModel.fieldcardImage!.isNotEmpty) {
+      if (imagesModel.FieldcardImage != null &&
+          imagesModel.FieldcardImage!.isNotEmpty) {
         fieldHasImages['ใบฟิล'] = true;
       }
-      if (imagesModel.frontImage != null &&
-          imagesModel.frontImage!.isNotEmpty) {
+      if (imagesModel.FrontImage != null &&
+          imagesModel.FrontImage!.isNotEmpty) {
         fieldHasImages['ข้างหน้ารถ'] = true;
       }
-      if (imagesModel.backImage != null && imagesModel.backImage!.isNotEmpty) {
+      if (imagesModel.BackImage != null && imagesModel.BackImage!.isNotEmpty) {
         fieldHasImages['ข้างหลังรถ'] = true;
       }
-      if (imagesModel.leftSide != null && imagesModel.leftSide!.isNotEmpty) {
+      if (imagesModel.LeftSide != null && imagesModel.LeftSide!.isNotEmpty) {
         fieldHasImages['ข้างซ้ายรถ'] = true;
       }
-      if (imagesModel.rightSide != null && imagesModel.rightSide!.isNotEmpty) {
+      if (imagesModel.RightSide != null && imagesModel.RightSide!.isNotEmpty) {
         fieldHasImages['ข้างขวารถ'] = true;
       }
-      if (imagesModel.carRegistrationPlate != null &&
-          imagesModel.carRegistrationPlate!.isNotEmpty) {
+      if (imagesModel.CarRegistrationPlate != null &&
+          imagesModel.CarRegistrationPlate!.isNotEmpty) {
         fieldHasImages['ทะเบียนรถ'] = true;
       }
-      if (imagesModel.chassis != null && imagesModel.chassis!.isNotEmpty) {
+      if (imagesModel.Chassis != null && imagesModel.Chassis!.isNotEmpty) {
         fieldHasImages['ตัวถังรถ'] = true;
       }
     }
@@ -316,19 +316,19 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
   List<String>? _getImagePathsByLabel(ImagesModel imagesModel, String label) {
     switch (label) {
       case 'ใบฟิล':
-        return imagesModel.fieldcardImage;
+        return imagesModel.FieldcardImage;
       case 'ข้างหน้ารถ':
-        return imagesModel.frontImage;
+        return imagesModel.FrontImage;
       case 'ข้างหลังรถ':
-        return imagesModel.backImage;
+        return imagesModel.BackImage;
       case 'ข้างซ้ายรถ':
-        return imagesModel.leftSide;
+        return imagesModel.LeftSide;
       case 'ข้างขวารถ':
-        return imagesModel.rightSide;
+        return imagesModel.RightSide;
       case 'ทะเบียนรถ':
-        return imagesModel.carRegistrationPlate;
+        return imagesModel.CarRegistrationPlate;
       case 'ตัวถังรถ':
-        return imagesModel.chassis;
+        return imagesModel.Chassis;
       default:
         return null;
     }

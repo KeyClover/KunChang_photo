@@ -40,7 +40,7 @@ class ImagesDB {
 
   void _createDb(Database db, int version) async {
     await db.execute('''
-    CREATE TABLE IF NOT EXIST $imagesTable(
+    CREATE TABLE if not exists $imagesTable(
       $colId INTEGER PRIMARY KEY AUTOINCREMENT,
       $colFieldCardImage TEXT,
       $colFrontImage TEXT,
