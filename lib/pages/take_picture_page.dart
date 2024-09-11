@@ -66,41 +66,41 @@ class _TakePicturePageState extends State<TakePicturePage> {
     }
   } // this is for getting the images
 
-  void deleteImage(BuildContext context, String field, int index) async {
-    final imageProvider = Provider.of<ImagesProvider>(context, listen: false);
+  // void deleteImage(BuildContext context, String field, int index) async {
+  //   final imageProvider = Provider.of<ImagesProvider>(context, listen: false);
 
-    if (imageProvider.selectedImageFiles[field] != null) {
-      final result = await showDialog<bool>(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('ลบรูปภาพ'),
-            content: const Text('คุณแน่ใจไหมว่าต้องการลบภาพนี้?'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text('ยกเลิก'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(context, true),
-                child: const Text('ตกลง'),
-              ),
-            ],
-          );
-        },
-      );
+  //   if (imageProvider.selectedImageFiles[field] != null) {
+  //     final result = await showDialog<bool>(
+  //       context: context,
+  //       builder: (BuildContext context) {
+  //         return AlertDialog(
+  //           title: const Text('ลบรูปภาพ'),
+  //           content: const Text('คุณแน่ใจไหมว่าต้องการลบภาพนี้?'),
+  //           actions: <Widget>[
+  //             TextButton(
+  //               onPressed: () => Navigator.pop(context, false),
+  //               child: const Text('ยกเลิก'),
+  //             ),
+  //             TextButton(
+  //               onPressed: () => Navigator.pop(context, true),
+  //               child: const Text('ตกลง'),
+  //             ),
+  //           ],
+  //         );
+  //       },
+  //     );
 
-      if (result == true) {
-        await imageProvider.deleteFromDatabaseTakepicture(field, index);
+  //     if (result == true) {
+  //       await imageProvider.deleteFromDatabaseTakepicture(field, index);
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('ลบรูปภาพสำเร็จ'),
-          ),
-        );
-      }
-    }
-  } // This is for deleting the images
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(
+  //           content: Text('ลบรูปภาพสำเร็จ'),
+  //         ),
+  //       );
+  //     }
+  //   }
+  // } // TO-DO create a deleteImage function
 
   // bool hasAnyImages(ImagesModel images) {
   //   return [
@@ -276,7 +276,7 @@ class _TakePicturePageState extends State<TakePicturePage> {
                   field: _selectedField!,
                   labelText: _fieldLabels[_selectedField!]!,
                   getImage: getImage,
-                  deleteImage: deleteImage,
+                  //deleteImage: deleteImage,
                 ),
                 const SizedBox(
                   height: 10,
