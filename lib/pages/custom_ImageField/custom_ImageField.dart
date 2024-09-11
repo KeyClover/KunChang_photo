@@ -9,13 +9,13 @@ class CustomImageField extends StatelessWidget {
     required this.field,
     required this.labelText,
     required this.getImage,
-    required this.deleteImage,
+    //required this.deleteImage,
   }) : super(key: key);
 
   final String field;
   final String labelText;
   final Function getImage;
-  final Function deleteImage;
+  //final Function deleteImage;
 
   @override
   Widget build(BuildContext context) {
@@ -59,13 +59,15 @@ class CustomImageField extends StatelessWidget {
                             fit: BoxFit.fill,
                           ),
                         ),
-                        Positioned(
-                            right: 0,
-                            child: IconButton(
-                              onPressed: () => deleteImage(context, field, 0),
-                              icon: const Icon(Icons.close_rounded,
-                                  color: Colors.red),
-                            ))
+                        // Positioned(
+                        //     right: 0,
+                        //     child: IconButton(
+                        //       onPressed: () => deleteImage(context, field, 0),
+                        //       icon: const Icon(Icons.close_rounded,
+                        //           color: Colors.red),
+                        //     ))
+
+                       // TO-DO create a delete function 
                       ],
                     )
                   : const SizedBox(

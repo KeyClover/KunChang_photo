@@ -1,7 +1,7 @@
-import 'dart:io';
+import 'dart:convert';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:kunchang_photo/models/images_model.dart';
+import 'package:kunchang_photo/models/images_retrieve_model.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:kunchang_photo/pages/take_picture_page.dart';
 import 'package:kunchang_photo/provider/images_provider.dart';
@@ -15,134 +15,7 @@ class DisplayImagePage extends StatefulWidget {
 }
 
 class _DisplayImagePageState extends State<DisplayImagePage> {
-  String _selectedFilter = 'รูปภาพทั้งหมด'; // Use for filter
-
-  final List<String> predefinedOrder = [
-    'ใบฟิล',
-    'ข้างหน้ารถ',
-    'ข้างหลังรถ',
-    'ข้างซ้ายรถ',
-    'ข้างขวารถ',
-    'ทะเบียนรถ',
-    'ตัวถังรถ'
-  ];
-
-  final Map<String, String> labelToColumnMap = {
-    'ใบฟิล': 'fieldcardImage',
-    'ข้างหน้ารถ': 'frontImage',
-    'ข้างหลังรถ': 'backImage',
-    'ข้างซ้ายรถ': 'leftSide',
-    'ข้างขวารถ': 'rightSide',
-    'ทะเบียนรถ': 'carRegistrationPlate',
-    'ตัวถังรถ': 'chassis',
-  };
-
-  @override
-  void initState() {
-    super.initState();
-    // Recalculate when returning to the page
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() {});
-    });
-  }
-
-  Future<List<ImagesModel>> fetchAllImagesFromDB(BuildContext context) async {
-    final imageProvider = Provider.of<ImagesProvider>(context, listen: false);
-    await imageProvider.fetchImagesFromAPI(); // Fetch images from the API
-    return imageProvider.images; // Return fetched images
-  }
-
-  void _deleteImage(
-      BuildContext context, String labelText, String imagePath) async {
-    final imageProvider = Provider.of<ImagesProvider>(context, listen: false);
-    final String? columnName = labelToColumnMap[labelText];
-
-    final bool? confirmDelete = await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('ลบรูปภาพ'),
-          content: const Text('คุณแน่ใจหรือว่าต้องการลบรูปภาพ?'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('ยกเลิก'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('ตกลง'),
-            ),
-          ],
-        );
-      },
-    );
-    if (confirmDelete == true) {
-      await imageProvider.deleteFromDatabaseDisplay(columnName!, imagePath);
-      //final updatedImages = await fetchAllImagesFromDB(context);
-      //final fieldHasImages = _checkFieldsWithImages(updatedImages);
-      setState(() {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('ลบรูปสำเร็จ')),
-        );
-      });
-    }
-  } // has error
-
-  Map<String, bool> _checkFieldsWithImages(List<ImagesModel> allImages) {
-    final Map<String, bool> fieldHasImages = {
-      'รูปภาพทั้งหมด': false,
-      'ใบฟิล': false,
-      'ข้างหน้ารถ': false,
-      'ข้างหลังรถ': false,
-      'ข้างซ้ายรถ': false,
-      'ข้างขวารถ': false,
-      'ทะเบียนรถ': false,
-      'ตัวถังรถ': false,
-    };
-
-    for (final imagesModel in allImages) {
-      if (imagesModel.FieldcardImage != null &&
-          imagesModel.FieldcardImage!.isNotEmpty) {
-        fieldHasImages['ใบฟิล'] = true;
-      }
-      if (imagesModel.FrontImage != null &&
-          imagesModel.FrontImage!.isNotEmpty) {
-        fieldHasImages['ข้างหน้ารถ'] = true;
-      }
-      if (imagesModel.BackImage != null && imagesModel.BackImage!.isNotEmpty) {
-        fieldHasImages['ข้างหลังรถ'] = true;
-      }
-      if (imagesModel.LeftSide != null && imagesModel.LeftSide!.isNotEmpty) {
-        fieldHasImages['ข้างซ้ายรถ'] = true;
-      }
-      if (imagesModel.RightSide != null && imagesModel.RightSide!.isNotEmpty) {
-        fieldHasImages['ข้างขวารถ'] = true;
-      }
-      if (imagesModel.CarRegistrationPlate != null &&
-          imagesModel.CarRegistrationPlate!.isNotEmpty) {
-        fieldHasImages['ทะเบียนรถ'] = true;
-      }
-      if (imagesModel.Chassis != null && imagesModel.Chassis!.isNotEmpty) {
-        fieldHasImages['ตัวถังรถ'] = true;
-      }
-    }
-
-    // If every field has images, set 'รูปภาพทั้งหมด' to true // Will appear the check mark
-
-    bool allFieldHaveImages = fieldHasImages['ใบฟิล'] == true &&
-        fieldHasImages['ข้างหน้ารถ'] == true &&
-        fieldHasImages['ข้างหลังรถ'] == true &&
-        fieldHasImages['ข้างซ้ายรถ'] == true &&
-        fieldHasImages['ข้างขวารถ'] == true &&
-        fieldHasImages['ทะเบียนรถ'] == true &&
-        fieldHasImages['ตัวถังรถ'] == true;
-
-    if (allFieldHaveImages) {
-      fieldHasImages['รูปภาพทั้งหมด'] = true;
-    }
-
-    return fieldHasImages;
-  }
+  String _selectedFilter = 'รูปภาพทั้งหมด';
 
   @override
   Widget build(BuildContext context) {
@@ -185,27 +58,26 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
       ),
       body: Container(
         constraints: const BoxConstraints.expand(),
-        padding:
-            const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 0.0),
-        child: FutureBuilder<List<ImagesModel>>(
-          future: fetchAllImagesFromDB(context),
+        padding: const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 0.0),
+        child: FutureBuilder<List<ImageRetrieveModel>>(
+          future: Provider.of<ImagesProvider>(context, listen: false).fetchImagesFromAPI(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
-              return const Center(child: Text('เกิดข้อผิดพลาดในการโหลดรูปภาพ'));
+              return Center(child: Text('เกิดข้อผิดพลาดในการโหลดรูปภาพ: ${snapshot.error}'));
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
               return const Center(child: Text('ไม่มีรูป'));
             } else {
               final allImages = snapshot.data!;
-              final fieldHasImages = _checkFieldsWithImages(allImages);
+              final imageTypes = allImages.map((img) => img.imageType).toSet().toList();
+              imageTypes.insert(0, 'รูปภาพทั้งหมด');
 
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding:
-                        const EdgeInsets.only(left: 8.0, top: 8.0, bottom: 1.0),
+                    padding: const EdgeInsets.only(left: 8.0, top: 8.0, bottom: 1.0),
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton2<String>(
                         dropdownStyleData: DropdownStyleData(
@@ -228,32 +100,22 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
                           elevation: 2,
                         ),
                         iconStyleData: const IconStyleData(
-                            icon: Icon(
-                              Icons.arrow_drop_down,
-                            ),
-                            iconSize: 35,
-                            iconEnabledColor: Colors.white),
+                          icon: Icon(Icons.arrow_drop_down),
+                          iconSize: 35,
+                          iconEnabledColor: Colors.white,
+                        ),
                         isExpanded: true,
                         value: _selectedFilter,
-                        items: fieldHasImages.keys
-                            .map<DropdownMenuItem<String>>((String value) {
+                        items: imageTypes.map<DropdownMenuItem<String>>((String? value) {
                           return DropdownMenuItem<String>(
-                            value: value,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(value,
-                                    style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white)),
-                                if (fieldHasImages[value] == true)
-                                  const Icon(
-                                    Icons.done,
-                                    color: Colors.green,
-                                    size: 30,
-                                  ),
-                              ],
+                            value: value ?? '',
+                            child: Text(
+                              value ?? '',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
                             ),
                           );
                         }).toList(),
@@ -267,8 +129,7 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
                   ),
                   Expanded(
                     child: Padding(
-                      padding:
-                          const EdgeInsets.only(top: 20, left: 20, right: 20),
+                      padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
                       child: ListView(
                         children: _buildFilteredImages(allImages),
                       ),
@@ -284,67 +145,32 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
     );
   }
 
-  // Build the filtered images based on the selected filter
-  List<Widget> _buildFilteredImages(List<ImagesModel> allImages) {
+  List<Widget> _buildFilteredImages(List<ImageRetrieveModel> allImages) {
     final List<Widget> imageWidgets = [];
 
-    for (final label in predefinedOrder) {
-      if (_selectedFilter == 'รูปภาพทั้งหมด' || _selectedFilter == label) {
-        for (final imagesModel in allImages) {
-          final imagePaths = _getImagePathsByLabel(imagesModel, label);
-          if (imagePaths != null && imagePaths.isNotEmpty) {
-            imageWidgets.addAll(
-              imagePaths.map((imagePath) {
-                if (imagePath.isNotEmpty && File(imagePath).existsSync()) {
-                  return ImageDisplayField(
-                    labelText: label,
-                    imagePath: imagePath,
-                    onDelete: () => _deleteImage(context, label, imagePath),
-                  );
-                }
-                return const SizedBox.shrink();
-              }).toList(),
-            );
-          }
-        }
+    for (final image in allImages) {
+      if (_selectedFilter == 'รูปภาพทั้งหมด' || _selectedFilter == image.imageType) {
+        imageWidgets.add(
+          ImageDisplayField(
+            labelText: image.imageType ?? 'Unknown',
+            imageData: image.fileData ?? '',
+          ),
+        );
       }
     }
 
     return imageWidgets;
   }
-
-  List<String>? _getImagePathsByLabel(ImagesModel imagesModel, String label) {
-    switch (label) {
-      case 'ใบฟิล':
-        return imagesModel.FieldcardImage;
-      case 'ข้างหน้ารถ':
-        return imagesModel.FrontImage;
-      case 'ข้างหลังรถ':
-        return imagesModel.BackImage;
-      case 'ข้างซ้ายรถ':
-        return imagesModel.LeftSide;
-      case 'ข้างขวารถ':
-        return imagesModel.RightSide;
-      case 'ทะเบียนรถ':
-        return imagesModel.CarRegistrationPlate;
-      case 'ตัวถังรถ':
-        return imagesModel.Chassis;
-      default:
-        return null;
-    }
-  }
 }
 
 class ImageDisplayField extends StatelessWidget {
   final String labelText;
-  final String imagePath;
-  final VoidCallback onDelete;
+  final String imageData;
 
   const ImageDisplayField({
     super.key,
     required this.labelText,
-    required this.imagePath,
-    required this.onDelete,
+    required this.imageData,
   });
 
   @override
@@ -352,22 +178,9 @@ class ImageDisplayField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              labelText,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            IconButton(
-              onPressed: onDelete,
-              icon: const Icon(
-                Icons.close_rounded,
-                color: Colors.red,
-                size: 25,
-              ),
-            ),
-          ],
+        Text(
+          labelText,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         ClipRRect(
@@ -384,10 +197,10 @@ class ImageDisplayField extends StatelessWidget {
               ],
             ),
             child: AspectRatio(
-              aspectRatio:9 / 14,
-              child: Image.file(
-                File(imagePath),
-                fit: BoxFit.fill,
+              aspectRatio: 9 / 14,
+              child: Image.memory(
+                base64Decode(imageData),
+                fit: BoxFit.cover,
               ),
             ),
           ),
